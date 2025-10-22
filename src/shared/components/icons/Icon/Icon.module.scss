@@ -1,0 +1,18 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.color-inherit {
+    color: inherit;
+}
+
+.color-primary {
+    color: $text-primary;
+}
+
+.color-secondary {
+    color: $text-secondary;
+}
+
+.color-accent {
+    color: $text-accent;
+}

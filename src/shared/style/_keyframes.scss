@@ -1,0 +1,13 @@
+$pulse-primary-color: #f1f1f1;
+$pulse-secondary-color: #909090;
+$pulse-animation-time: 3s;
+
+@keyframes pulse {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}

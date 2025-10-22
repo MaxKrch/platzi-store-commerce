@@ -1,0 +1,59 @@
+// Брейкпоинты
+$breakpoint-mobile: 375px;
+$breakpoint-tablet: 768px;
+$breakpoint-laptop: 1024px;
+$breakpoint-desktop: 1440px;
+
+// Основные цвета
+$brand: #518581;
+$brand-active: #487773;
+$brand-hover: #86aaa7;
+$brand-disabled: #d9d9d9;
+
+// Основные размеры
+$space-xxxl: 32px;
+$space-xxl: 24px;
+$space-xl: 20px;
+$space-l: 18px;
+$space-m: 16px;
+$space-s: 14px;
+$space-xs: 12px;
+$space-xxs: 10px;
+$space-xxxs: 8px;
+
+// Цвета шрифта 
+$text-primary: #000;
+$text-secondary: #afadb5;
+$text-accent: #518581;
+
+// Остальные цвета
+$primary-bg: #f1f1f1;
+
+// Тени
+$shadow-light: 0 2px 5px 0 rgba(200, 200, 200, 0.25);
+$shadow-normal: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+$shadow-bold: 0 4px 10px 0 rgba(0, 0, 0, 0.75);
+
+// Общие размеры элементов
+$section-title-base: 28px;
+$section-title-mobile: 30px;
+$section-title-tablet: 32px;
+$section-title-laptop-up: 34px;
+
+$page-container-min-width: 320px;
+$page-container-max-width: 1240px;
+$page-container-width: 100%;
+$page-container-padding-x: $space-xxs;
+
+$card-min-width: 300px;
+$card-max-width: 600px;
+
+$control-field-height: 40px;
+$control-field-width: 300px;
+
+$border-radius-primary: 4px;
+$border-radius-secondary: 2px;
+
+$button-min-width: 125px;
+
+

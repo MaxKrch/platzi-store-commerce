@@ -1,0 +1,69 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+
+.search {
+    @include content-container();
+    display: grid;
+    grid-template-areas: 
+        "query"
+        "categories"
+        "sort"
+        "stock";
+    gap: $space-xxxl;
+    width: 100%;
+    
+    @include tablet-up() {
+        grid-template-columns: min(50%, 400px) auto;
+        grid-template-areas: 
+            "query query"
+            "categories sort"
+            "stock stock";       
+    }
+
+    @include laptop-up() {
+        grid-template-areas: 
+            "query query"
+            "categories sort"
+            "stock stock";    
+    }
+
+    &__query {
+        grid-area: query;
+        width: 100%;
+    }
+
+    &__categories-filter {
+        grid-area: categories;
+    }
+
+    &__sort {
+        grid-area: sort;
+            margin-right: 50px;
+        @include tablet-up() {
+            max-width: 350px;
+        }
+    }
+
+    &__stock {
+        grid-area: stock;
+        display: flex;
+        align-items: flex-end;
+        gap: $space-xxxs;
+        cursor: pointer;
+
+        &:hover {
+            color: $brand;
+        }
+
+        &-description {
+            font-size: 1.1em;
+        }
+
+        &-icon {
+            background-color: #fff;
+            border: 1px solid $brand;
+        }
+       
+    }
+}

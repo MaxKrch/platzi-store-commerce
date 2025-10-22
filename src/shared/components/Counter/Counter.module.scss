@@ -1,0 +1,52 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.counter {
+    @include base-adaptive-font-size();
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid $brand;
+    border-radius: $border-radius-secondary;
+    height: $control-field-height;
+    overflow: hidden;
+
+
+    &__button {
+        width: $control-field-height;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        cursor: pointer;
+        
+        &_primary {
+            color: #fff;
+            background-color: $brand;        
+            
+            &:hover {
+                background-color: $brand-hover;
+            }
+        }        
+
+        &_secondary {
+            color: $brand;
+            background-color: #fff;
+            
+            &:hover {
+                background-color: #efefef;
+            }
+        }
+
+
+    }
+
+    &__count {
+        border-left: 1px solid $brand;
+        border-right: 1px solid $brand;
+        flex-basis: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9em;
+    }
+}

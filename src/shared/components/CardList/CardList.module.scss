@@ -1,0 +1,14 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.card-list {
+    margin-top: $space-xxxl;
+    display: grid;
+    justify-content: space-between;
+    gap: $space-xxl;
+    grid-template-columns: repeat(auto-fill, minmax($card-min-width, 1fr));
+    
+    &__item {
+        margin: auto;
+    }
+}

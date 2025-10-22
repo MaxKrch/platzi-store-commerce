@@ -1,0 +1,55 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.user-modal {
+    display: grid;
+    padding: $space-xxl;
+    grid-template-areas: 
+        "image info"
+        "error error"
+        "action action";
+    gap: $space-xl;
+
+    &__image {
+        object-fit: contain;
+        object-position: center;
+   
+        &-wrapper {
+            max-width: 200px;
+            height: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            grid-area: image;
+        }
+    }
+
+    &__info {
+        grid-area: info;
+    }
+
+    &__section {
+        height: 35%;
+    }
+
+    &__action {
+        grid-area: action;
+    }
+
+    &__error {
+        grid-area: error;
+        height: 1em;
+        font-size: 0.9em;
+        color: red;
+        font-weight: bold;
+        padding: $space-l;
+    }
+
+    &__button {
+        width: 100%;
+    }
+}
+
+
+                    

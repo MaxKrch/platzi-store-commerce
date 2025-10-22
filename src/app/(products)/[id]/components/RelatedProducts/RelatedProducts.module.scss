@@ -1,0 +1,26 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.related-products {
+    max-width: 100%;
+
+    &__container {
+        @include content-container();
+        margin-top: 48px;
+    }
+
+    &__title {
+        @include section-title-font-size()
+    }
+
+
+    ul {
+        display: flex;
+        overflow: auto;
+        padding-bottom: 48px;
+
+        @include tablet-up() {
+            display: grid;
+        }
+    }
+}

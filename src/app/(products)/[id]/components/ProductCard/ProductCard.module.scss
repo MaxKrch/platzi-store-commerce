@@ -1,0 +1,16 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.product-card {
+    @include content-container();
+    
+    margin-top: 0.8rem;
+
+    &__price-slot {
+        font-size: $space-xxl;
+
+        @include laptop-up() {
+            font-size: $space-xxxl;
+        }
+    }
+}

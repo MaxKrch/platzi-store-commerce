@@ -1,0 +1,65 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$modal-background: rgb(0 0 0 / 0.25);
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    padding: $space-xxxl 0 $space-l;
+    background: $modal-background;
+    z-index: 9;
+
+    &__container {
+        min-width: $page-container-min-width;
+        width: $page-container-width;
+        margin: auto;
+        height: 100%;
+        position: relative;
+
+        &_modal {
+            max-width: 600px;
+        }
+
+        &_full {
+            max-width: $page-container-max-width;
+        }
+    }       
+
+    &__content {
+        max-height: 100%;
+        overflow: auto;
+        scrollbar-width: thin; 
+        border-radius: $border-radius-primary;
+        box-shadow: $shadow-bold;
+        background-color: #fff;
+    }
+    
+    &__close-icon {
+        width: 28px;
+        height: 28px;
+
+        &-wrapper {
+            cursor: pointer;
+            position: absolute;
+            z-index: 11;
+            border-radius: 50%; 
+            color: $brand;
+            box-shadow: $shadow-normal; 
+            top: -32px;
+            right: 0;  
+
+            @include tablet-up() {
+                top: -24px;
+                right: -24px;  
+            }
+
+            &:hover {
+                background-color: rgb(255 255 255 / 0.25);
+            }
+        }    
+    }
+}

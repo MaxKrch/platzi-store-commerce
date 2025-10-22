@@ -1,0 +1,54 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$active-link-color: $brand;
+$link-hover-color: $brand-hover;
+
+@mixin link-bottom {
+    border-bottom: 2px solid transparent;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    flex-basis: 75%;
+    
+    @include tablet-up() {
+        flex-basis: 50%;       
+    }
+
+    &-item {
+        &__link {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            transition: color 0.5s, border 0.5s;
+            @include link-bottom();
+
+            &:hover:not(.active) {
+                color: $link-hover-color;
+                border-bottom-color: $link-hover-color;
+            }
+
+            &_active {
+                transition: color 0.5s, border 0.5s;
+                color: $active-link-color;
+                pointer-events: none;        
+            }
+        }
+
+        &__name{
+            font-size: $space-s;
+
+            @include mobile-only() {
+                font-size: $space-m;
+            }
+
+            @include tablet-up() {
+                font-size: $space-l;
+            }
+        }
+    }
+}

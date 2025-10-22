@@ -1,0 +1,251 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$preview-card-bg: #fff;
+$preview-card-image-bg: #d9d9d9;
+$preview-card-height: 100%;
+$preview-card-shadow: $shadow-normal;
+
+$full-card-actions-space: 48px;
+
+$base-gap: 0.5em;
+$base-line-height: 150%;
+
+
+.card {
+    @include base-adaptive-font-size();
+
+    &__image {
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        display: block;
+        position: relative;
+        transition: transform 1s, filter 1s;
+
+        &-wrapper {
+            aspect-ratio: 1 / 1;
+            background: $preview-card-image-bg;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        &-link {
+            display: block;
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+    }
+
+    &__main {
+        display: flex;
+        flex-direction: column;
+        gap: $base-gap;
+        padding: $base-gap;
+    }
+
+
+}
+
+
+.preview {
+    min-width: $card-min-width;
+    max-width: $card-max-width;
+    height: $preview-card-height;
+    padding-bottom: calc($base-gap * 2);
+    background: $preview-card-bg;
+    border-radius: $border-radius-primary;
+    overflow: hidden;
+    transition: box-shadow 0.5s;
+
+    &:hover {
+        box-shadow: $shadow-normal;
+        transition: box-shadow 0.5s;
+
+        .card__image {
+            transition: transform 1s, filter 1s;
+            transform: scale(1.1);
+            filter: blur(1px);
+        }
+    }
+    
+    &__main {
+        cursor: pointer;
+    }
+
+    &__title {
+        height: 3em;
+        font-size: 1.2em;
+        line-height: $base-line-height;
+    }
+
+    &__description {
+        font-size: 0.8em;
+        line-height: $base-line-height;
+    }
+
+    &__caption-slot {
+        font-size: 0.9em;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: calc($base-gap * 3);
+        padding: 0 $base-gap;
+    }
+
+    &__content-slot {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.full {
+    display: grid;
+    grid-template-areas:
+        "image"
+        "main"
+        "footer";
+    gap: $base-gap;
+
+    @include tablet-up() {
+        grid-template-areas:
+            "image main"
+            "image footer";
+        grid-template-rows: auto 1fr;
+        gap: ($base-gap * 3);
+    }
+
+    &__image-wrapper {
+        border-radius: $border-radius-primary;
+        grid-area: image;
+
+        @include tablet-up() {
+            width: 350px;
+        }
+
+        @include laptop-up() {
+            width: 600px;
+        }
+    }
+
+    &__main {
+        gap: $base-gap;
+        padding: $base-gap;
+        grid-area: main;
+    }
+
+    &__title {
+        font-size: 2em;
+    }
+
+    &__description {
+        margin-top: 1em;;
+        font-size: 0.8em;
+        line-height: $base-line-height;
+    }
+
+    &__footer {
+        grid-area: footer;
+        display: flex;
+        flex-direction: column;
+        padding: $base-gap;
+        gap: ($base-gap * 2);
+    }
+}
+
+.cart {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: $base-gap;
+    grid-template-areas:
+        'image main'
+        'image price'
+        'action action';
+
+    @include tablet-up() {
+        grid-template-areas:
+            'image main'
+            'image footer';
+    }
+
+    &__image {
+        &-wrapper {
+            width: 100px;
+            grid-area: image;
+
+            @include mobile-only() {
+                width: 150px;
+            }
+
+            @include tablet-up() {
+                width: 250px;
+            }   
+        }        
+    }
+
+    &__main {
+        grid-area: main;
+    }
+
+    &__footer {
+        display: contents;
+        padding: $base-gap;
+
+        @include tablet-up() {
+            gap: $base-gap;
+            flex-direction: column;
+            display: flex;
+            grid-area: footer;
+        }
+    }
+
+    &__price-slot {
+        grid-area: price;
+
+    }
+
+    &__action-slot {
+        grid-area: action;
+
+    }
+}
+
+.caption-slot__link {
+    border-bottom: 2px solid transparent;
+    &:hover {
+        color: $brand;
+        border-color: $brand;
+    }
+}
+
+.action-slot {    
+    display: flex;
+    gap: $space-s;
+
+    &__button {
+        min-width: $button-min-width;
+    }
+}
+
+.price-slot {
+    display: flex;
+    align-items: baseline;
+    gap: $space-xxs;
+
+    &__title {
+        font-size: 0.9em; 
+    color: $brand;
+    }
+
+    &__full {
+        text-decoration: line-through;
+        color: red;
+        font-size: 0.75em;
+    }
+}

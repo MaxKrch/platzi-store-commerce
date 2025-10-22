@@ -1,0 +1,42 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$cross-size: 24px;
+
+.filter {
+    width: 100%;
+    display: flex;
+    gap: $space-xxs;
+    align-items: center;
+    border-radius: $border-radius-secondary;
+
+    @include mobile-up() {
+        // width: 325px;
+    }
+
+    &__cross {
+        width: $control-field-height;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+  
+        
+    &__icon {
+        width: $cross-size;
+        height: $cross-size;
+        color: $brand;
+        flex-shrink: 0;
+    }
+
+    &__skeleton {
+        @include pulse-gradient();
+        height: $control-field-height;
+    }
+
+    &__dropdown {
+        flex-basis: 100%;
+    }
+}

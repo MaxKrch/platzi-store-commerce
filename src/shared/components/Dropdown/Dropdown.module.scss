@@ -1,0 +1,42 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$dropdown-width: $control-field-width;
+$dropdown-options-bg: #fff;
+$dropdown-options-shadow: $shadow-normal;
+$dropdown-option-height: $control-field-height;
+$dropdown-option-hover-color: $text-secondary;
+$dropdown-option-selected-color: $text-accent;
+
+.dropdown {
+  &-container {
+    border-radius: $border-radius-secondary;
+    position: relative;
+    z-index: 3;
+  }
+ 
+  background: $dropdown-options-bg;
+  margin-top: $space-xxs;
+  box-shadow: $dropdown-options-shadow;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: $control-field-height;
+
+  &__option {
+    display: flex;
+    align-items: center;
+    padding: $space-s $space-xs;
+    width: 100%;
+    height: $dropdown-option-height;
+    cursor: pointer;
+
+    &_selected {
+      color: $dropdown-option-selected-color;
+    }
+
+    &:not(.option_selected):hover {
+      color: $dropdown-option-hover-color;
+    }
+  }
+}

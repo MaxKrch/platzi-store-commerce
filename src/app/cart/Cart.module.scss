@@ -1,0 +1,39 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.cart {
+    @include content-container();
+    @include base-adaptive-font-size();
+    margin-top: $space-xxl;
+    padding-bottom: $space-xxl;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xxl;
+    width: 100%;
+
+    @include tablet-up() {
+       flex-direction: row;
+       grid-template-columns: 2;
+    }
+
+    &-products {
+        flex-basis: 100%;
+    }
+
+    &-summary {
+        @include tablet-up() {
+            max-width: 450px;
+            min-width: 300px;
+            flex-shrink: 0;
+        }     
+    }
+}
+
+.action-slot {
+    display: flex;
+    gap: $space-s;
+
+    &__button {
+        min-width: $button-min-width
+    }
+}

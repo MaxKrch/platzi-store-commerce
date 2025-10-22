@@ -1,0 +1,22 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+
+.button {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    height: $control-field-height;
+    color: $text-primary;
+    border-bottom: 2px solid transparent;
+    transition: color 0.5s, border 0.5s;
+
+    &:hover {
+        color: $text-accent;
+        border-bottom-color: $text-accent;
+        transition: color 0.5s, border 0.5s;
+    }
+    &_back {
+        transform: rotate(180deg);
+    }
+}

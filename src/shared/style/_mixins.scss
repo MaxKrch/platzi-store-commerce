@@ -1,0 +1,103 @@
+@use "variables" as *;
+@use "keyframes" as *;
+
+@mixin mobile-up {
+    @media screen and (min-width: $breakpoint-mobile) {
+        @content;
+    }
+}
+
+
+@mixin tablet-up {
+    @media screen and (min-width: $breakpoint-tablet) {
+        @content;
+    }
+}
+
+
+@mixin laptop-up {
+    @media screen and (min-width: $breakpoint-laptop) {
+        @content;
+    }
+}
+
+
+@mixin desktop-up {
+    @media screen and (min-width: $breakpoint-desktop) {
+        @content;
+    }
+}
+
+@mixin mobile-only {
+    @media screen and (min-width: $breakpoint-mobile) and (max-width: #{$breakpoint-tablet + 1px}) {
+        @content;
+    }
+}
+
+@mixin tablet-only {
+    @media screen and (min-width: $breakpoint-tablet) and (max-width: #{$breakpoint-desktop}) {
+        @content;
+    }
+}
+
+@mixin laptop-only {
+    @media screen and (min-width: $breakpoint-deskktop) {
+        @content;
+    }
+}
+
+@mixin desktop-only {
+    @media screen and (min-width: $breakpoint-phone) and (max-width: $breakpoint-) {
+        @content;
+    }
+}
+
+@mixin content-container {
+    max-width: $page-container-max-width;
+    min-width: $page-container-min-width;
+    width: $page-container-width;
+    padding: 0 $page-container-padding-x;
+    margin: auto;
+}
+
+@mixin pulse-gradient($primary-color: $pulse-primary-color,
+    $secondary-color: $pulse-secondary-color,
+    $time: $pulse-animation-time) {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, $primary-color 0%, $secondary-color 50%, $primary-color 100%);
+    background-size: 200% 100%;
+    animation: pulse $time infinite;
+}
+
+@mixin base-adaptive-font-size {
+    font-size: $space-s;
+
+    @include mobile-only() {
+        font-size: $space-m;
+    }
+
+    @include tablet-only() {
+        font-size: $space-l;
+    }
+
+    @include laptop-up() {
+        font-size: $space-xl;
+    }
+}
+
+@mixin section-title-font-size {
+    font-size: $section-title-base;
+
+    @include mobile-only() {
+        font-size: $section-title-mobile;
+    }
+
+    @include tablet-only() {
+        font-size: $section-title-tablet;
+    }
+
+    @include laptop-up() {
+        font-size: $section-title-laptop-up;
+    }
+}

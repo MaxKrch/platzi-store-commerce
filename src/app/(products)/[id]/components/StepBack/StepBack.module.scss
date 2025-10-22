@@ -1,0 +1,15 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.stepback {
+    @include content-container();
+    margin-top: $space-l;
+
+    @include tablet-only() {
+        margin-top: $space-xxl;
+    }
+
+    @include laptop-up() {
+        margin-top:$space-xxxl;
+    }
+}

@@ -1,0 +1,39 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$max-width: 650px;
+
+.section-header {
+    max-width: $max-width;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 0;
+
+    @include tablet-up {
+        padding: 75px 0;
+    }
+
+    @include laptop-up {
+        padding: 100px 0;
+    }
+
+    &__title {
+        @include tablet-up() {
+            margin-bottom: $space-xxl;
+        }
+    }
+    
+    &__content {
+        height: 0;
+        overflow: hidden;
+        text-align: center;
+        white-space: 'pre-wrap';
+        line-height: 1.5em;
+
+        @include tablet-up {
+            height: auto;
+        }
+    }
+}

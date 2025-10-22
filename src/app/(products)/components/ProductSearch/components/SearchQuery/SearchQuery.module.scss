@@ -1,0 +1,70 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$cross-size: 24px;
+$cross-margin: calc(($control-field-height - $cross-size) / 2);
+$input-right-padding: calc($cross-size + 2 * $cross-margin);
+
+.search-query {
+    display: flex;
+    gap: $space-xxs;
+    width: 100%;
+
+    &-input {
+        &__wrapper {
+            flex-basis: 100%;
+            position: relative; 
+        }
+        
+        input {
+            padding-right: $input-right-padding;
+        }
+
+        &__cross {
+            position: absolute;
+            top: $cross-margin;
+            right: $cross-margin;
+            width: $cross-size;
+            height: $cross-size;
+            color: $brand;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+    }
+
+    &-submit {
+        padding: 0;
+        width: $control-field-height;
+        flex-shrink: 0;
+
+        &:disabled {
+            background-color: $brand-disabled;
+            cursor: auto;
+        }
+
+        @include tablet-up() {
+            padding: $space-xs $space-l;
+            width: auto;
+        }
+
+        &__icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            padding: 0;
+        }
+
+        &__text {
+            display: none;
+
+            @include tablet-up() {
+                display: inline-block;
+            }
+        }
+
+        @include tablet-up() {
+            display: flex;
+            gap: $space-xxs;
+        }
+    }
+}

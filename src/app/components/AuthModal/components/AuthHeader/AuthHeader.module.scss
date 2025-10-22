@@ -1,0 +1,34 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.header {
+    display: flex;
+    flex-direction: row;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+
+    &__button {
+        flex-basis: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: $control-field-height;        
+
+        &:not(.header__button_active) {
+            cursor: pointer;
+            background-color: #DFDFDF;
+            color: #fff;
+
+            &:hover {
+                color: $brand-hover;
+            }
+        }
+
+        &_active {
+            pointer-events: none;
+            color: $brand;
+        }
+    }
+}

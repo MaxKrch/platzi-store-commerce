@@ -1,0 +1,88 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$icon-size: 24px;
+$icon-margin: calc(($control-field-height - $icon-size) / 2);
+$input-left-padding: calc($control-field-height);
+
+.form {
+    display: flex;
+    gap: $space-xxl;
+    flex-direction: column;
+    padding: $space-xxl;
+    
+    &__description {
+        display: flex;
+        flex-direction: column;
+        gap: $space-xxs;
+        font-size: 0.8em;
+        padding: 0 $space-xxs;
+
+    }
+
+    &__label {
+        position: relative;
+    } 
+
+    &__input {
+        input {
+            border-bottom: 1px solid $brand;
+            background-color: #EFEFEF;
+            border-radius: $border-radius-secondary;
+            padding-left: $input-left-padding;
+   
+
+            &::placeholder {
+                font-size: 0.9em;
+                color: $brand;
+                opacity: 0.5;
+            }
+        }
+
+        &_error {
+            input {
+                border-color: red;
+            }
+        }
+    }
+
+    &__icon{
+        position: absolute;
+        top: $icon-margin;
+        left: $icon-margin;
+        width: $icon-size;
+        height: $icon-size;
+        color: $brand;
+    }
+
+
+    &__error {
+        color: rgb(225 25 0);
+        font-size: 0.75em;
+        height: 1em;
+        padding: 0 $space-xxs;
+    } 
+    
+    &__checkbox {
+        display: flex;
+        align-items: center;
+    }
+    
+    &__check {
+        border: 1px solid $brand;
+        background-color: #EFEFEF;
+    }
+
+    &__submit {
+        &-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: $space-xxxl
+        }
+
+        &-icon {
+            color: #fff;
+        }
+    }
+}

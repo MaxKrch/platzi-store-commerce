@@ -1,0 +1,146 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$bg-color: rgb(255 255 255 / 0.5);
+$text-bg-color: rgb(125 125 125 / 0.25);
+
+.skeleton {
+    @include base-adaptive-font-size();
+    padding: 0.5em;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+
+    @include tablet-up() {
+        flex-direction: row;
+    }
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    width: 100%;
+
+    &-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        border-radius: $border-radius-primary;
+        overflow: hidden;
+        position: relative;
+
+        @include tablet-up() {
+            flex-direction: row;
+        }
+
+        &::before {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            @include pulse-gradient()
+        }
+
+        &__img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            flex-shrink: 0;
+
+            @include tablet-up() {
+                min-width: 100px;
+                max-width: 200px;
+                width: 30%;
+            }
+        }
+
+        &__content {
+            flex-basis: 100%;
+            background-color: $bg-color;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: $space-xxl;
+            padding: 1.5em;
+        }
+
+        &__title {
+            height: 1.2em;
+            width: 90%;
+            background-color: $text-bg-color;
+        }
+
+        &__description {
+            height: 3em;
+            width: 75%;
+            background-color: $text-bg-color;
+        }
+
+
+        &__button {
+            width: 50%;
+            height: 2em;
+            background-color: $text-bg-color;
+        }
+    }
+}
+
+.summary {
+    position: sticky;
+    top: 110px;
+    height: min-content;
+    border-radius: $border-radius-primary;
+    overflow: hidden;
+    min-width: 300px;;;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        @include pulse-gradient();
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background-color: $bg-color;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__title {
+        min-width: 150px;
+        max-width: 550px;
+        width: 50%;
+        height: 2em;
+        background-color: $text-bg-color;
+    }
+
+    &__content {
+        min-width: 200px;
+        max-width: 700px;
+        width: 100%;
+        height: 1.5em;
+        background-color: $text-bg-color;
+    }
+
+    &__button {
+        min-width: 250px;
+        max-width: 550px;
+        width: 100%;
+        height: 2em;
+        background-color: $text-bg-color;
+    }
+}

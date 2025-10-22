@@ -1,0 +1,82 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$pagination-color: #151411;
+$item-width: 38px;
+$item-height: 40px;
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 54px 0 108px;
+
+    &__list {
+        display: contents;
+    }
+
+    &__page {
+        width: $item-width;
+        height: $item-height;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $pagination-color;
+        cursor: pointer;
+        order: 4;
+        transition: background-color 0.5s;
+
+        &_current {
+            background: $brand;
+            color: #fff;
+            cursor: auto;
+        }
+
+        &_disabled {
+            color: $brand-disabled;
+            cursor: auto;
+        }
+
+        &_prev {
+            order: 1;
+        
+            &-icon {
+                transform: rotate(180deg);
+            }
+        }
+
+        &_next {
+            order: 7;
+        }
+
+        &:not(.page__prev, .page__next) {
+            &:first-of-type {
+                order: 2;
+            }
+
+            &:last-of-type {
+                order: 6;
+            }
+        }
+
+        &:hover:not(.pagination__page_current, .pagination__page_disabled) {
+            background: $brand-hover;
+            transition: background-color 0.5s;
+        }
+    }
+
+    
+    &__elipses {
+        width: calc($item-width / 2);
+        display: flex;
+        justify-content: center;
+
+        &__next {
+            order: 5;
+        }
+
+        &__prev{
+        order: 3; 
+        }
+    }
+}

@@ -1,0 +1,7 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.auth {
+    @include base-adaptive-font-size();
+}
+

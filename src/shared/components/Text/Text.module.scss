@@ -1,0 +1,66 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.view-title {
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 110%;
+}
+
+.view-button {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 100%;
+}
+
+.view-p-20 {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 120%;
+}
+
+.view-p-18 {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 122%;
+}
+
+.view-p-16 {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 125%;
+}
+
+.view-p-14 {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 130%;
+}
+
+.weight-normal {
+    font-weight: 400;
+}
+
+.weight-medium {
+    font-weight: 500;
+}
+
+.weight-bold {
+    font-weight: 700;
+}
+
+.color-inherit {
+    color: inherit;
+}
+
+.color-primary {
+    color: $text-primary;
+}
+
+.color-secondary {
+    color: $text-secondary;
+}
+
+.color-accent {
+    color: $text-accent;
+}

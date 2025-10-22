@@ -1,0 +1,26 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$logo-width: 130px;
+$logo-width-without-name: 42px;
+
+.logo {
+    width: $logo-width-without-name;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @include tablet-up() {
+        width: $logo-width;
+    }
+    
+    &__name {
+        width: 0;
+        overflow: hidden;
+        
+        @include tablet-up() {
+            width: auto;
+        }
+    }
+}
+

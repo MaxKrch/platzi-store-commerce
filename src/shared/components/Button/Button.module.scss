@@ -1,0 +1,117 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+
+$button-title-base: 14px;
+$button-title-mobile: 15px;
+$button-title-tablet: 16px;
+$button-title-laptop-up: 18px;
+
+$button-primary-text: #fff;
+$button-primary-text-hover: #fff;
+$button-primary-text-disabled: #fff;
+$button-primary-text-active: #fff;
+
+$button-primary-bg: $brand;
+$button-primary-bg-hover: $brand-hover;
+$button-primary-bg-disabled: $brand-disabled;
+$button-primary-bg-active: $brand-active;
+
+$button-secondary-text: $brand;
+$button-secondary-text-hover: $brand-hover;
+$button-secondary-text-disabled: $brand-disabled;
+$button-secondary-text-active: $brand-active;
+
+$button-secondary-bg: #fff;
+$button-secondary-bg-hover: #fefefe;
+$button-secondary-bg-disabled: #eeeeee;
+$button-secondary-bg-active: #efefef;
+
+$button-height: $control-field-height;
+$button-padding-x: $space-s;
+$button-padding-y: $space-s;
+
+.button {
+    font-size: $button-title-base;
+    
+    @include mobile-only() {
+        font-size: $button-title-mobile;
+    } 
+
+    @include tablet-only() {
+        font-size: $button-title-tablet;
+    }
+
+    @include laptop-up() {
+        font-size: $button-title-laptop-up;     
+    }
+
+    display: flex;
+    gap: $space-xxs;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: $border-radius-secondary;
+    padding: $button-padding-y $button-padding-x;
+    height: $button-height;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &-primary {
+        background: $button-primary-bg;
+        color: $button-primary-text;
+        border-color: $button-primary-bg;
+        transition: 0.5s;
+
+        &:not(.button-primary_loading) {
+            &:not(.button-primary_disabled):hover {
+                background: $button-primary-bg-hover;
+                color: $button-primary-text-hover;
+                border-color: $button-primary-bg-hover;
+                transition: 0.5s;
+            }
+
+            &:active {
+                background: $button-primary-bg-active;
+                color: $button-primary-text-active;
+                border-color: $button-primary-bg-active;
+            }
+        }
+
+        &_disabled, &_loading {
+            background: $button-primary-bg-disabled;
+            color: $button-primary-text-disabled;
+            border-color: $button-primary-bg-disabled;
+            cursor: auto;
+        }
+    }
+
+    &-secondary {
+        background: $button-secondary-bg;
+        color: $button-secondary-text;
+        border-color: $button-secondary-text;
+
+        &:not(.button-secondary_loading) {
+            &:not(.button-secondary_disabled):hover {
+                background: $button-secondary-bg-hover;
+                color: $button-secondary-text-hover;
+                border-color: $button-secondary-text-hover;
+                transition: 0.5s;
+            }
+
+            &:active {
+                background: $button-secondary-bg-active;
+                color: $button-secondary-text-active;
+                border-color: $button-secondary-text-active;
+                transition: 0.5s;
+            }
+        }
+
+        &_disabled, &_loading  {
+            background: $button-secondary-bg-disabled;
+            color: $button-secondary-text-disabled;
+            border-color: $button-secondary-text-disabled;
+            cursor: auto;
+        }
+    }
+}

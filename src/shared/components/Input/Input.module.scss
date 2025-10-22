@@ -1,0 +1,78 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$input-text: $text-primary;
+$input-text-focus: $text-primary;
+$input-text-disabled: $brand-disabled;
+
+$input-placeholder-color: $text-secondary;
+
+$input-bg: #fff;
+$input-bg-focus: #fff;
+$input-bg-disabled: #fff;
+
+$input-border-color: #fff;
+$input-border-color-focus: $brand;
+$input-border-color-disabled: #fff;
+
+$input-height: $control-field-height;
+$input-icon-width: $space-xl;
+
+.input {
+    &__container {
+        position: relative;
+        border-radius: $border-radius-secondary;
+    }
+
+    font-weight: 400;
+    font-size: $space-m;
+    line-height: 125%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $space-xxs;
+    height: $input-height;
+    width: 100%;
+    padding: $space-s $space-xs;
+    border: 1px solid $input-border-color;
+    color: $input-text;
+    background: $input-bg;
+
+    &::placeholder {
+        color: $input-placeholder-color;
+        font-weight: 400;
+        font-size: $space-m;
+        line-height: 125%;
+    }
+
+    &:focus {
+        background: $input-bg-focus;
+        border: 1px solid $input-border-color-focus;
+        color: $input-text-focus;
+        cursor: auto;
+    }
+
+    &:disabled {
+        background: $input-bg-disabled;
+        border: 1px solid $input-border-color-disabled;
+        color: $input-text-disabled;
+    }
+
+    &__icon-container {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        width: $input-icon-width;
+        right: $space-xs;
+        top: $space-xxs;
+        pointer-events: none;
+        cursor: pointer;
+    }
+    
+    &_with-icon {
+        padding-right: calc($input-icon-width + $space-xxs + $space-xs);
+    }
+}
+
+
+

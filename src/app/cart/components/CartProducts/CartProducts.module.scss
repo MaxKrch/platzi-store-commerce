@@ -1,0 +1,34 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.cart-products {
+    display: flex;
+    flex-direction: column;
+    gap: $space-l;
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        padding: $space-s;      
+        background-color: #fff;
+        box-shadow: $shadow-normal;
+        border-radius: $border-radius-primary;
+        gap: $space-l;
+
+        li:not(:last-child) {
+            .cart-products__card {
+                border-bottom: 3px solid $brand-disabled;
+                padding-bottom: $space-l;
+            }
+        }
+    }
+
+    &__title {
+        padding: $space-xl;
+    }
+
+
+    &__outofstock {
+        opacity: 0.5;
+    }
+}

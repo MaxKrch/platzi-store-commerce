@@ -1,0 +1,44 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.summary {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xxxl;
+    background-color: #fff;
+    border-radius: $border-radius-primary;
+    box-shadow: $shadow-normal;
+    padding: $space-l;
+    position: sticky;
+    top: 100px;
+
+
+    &__title {
+        border-bottom: 3px solid $brand;
+        padding: $space-xs;
+    }
+
+
+    &__total {
+
+            align-items: baseline;
+        box-shadow: inset $shadow-light;
+        display: flex;
+        background-color: $primary-bg;
+        padding: $space-xs;
+        border-radius: $border-radius-primary;
+        gap: $space-xxs;
+
+        &-title {
+            flex-basis: 200px;
+        }
+
+        &-value {
+            &_through {
+                text-decoration: line-through;
+                font-size: 0.75em;
+                color: red;
+            }
+        }
+    }
+}

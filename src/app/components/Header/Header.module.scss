@@ -1,0 +1,25 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$header-height: 75px;
+$header-bg: #fff;
+$header-bottom-color: #f3f3f3;
+
+.header {
+    width: 100%;
+    height: $header-height;
+    background: $header-bg;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 2px solid $header-bottom-color;
+    
+    &__content {
+        @include content-container();
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+    }
+}
+

@@ -1,0 +1,6 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.action-slot__button {
+    min-width: $button-min-width;
+}

@@ -1,0 +1,58 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.loader {
+    animation:
+        rotate-animation 2.5s infinite,
+        opacity-animation 2.5s infinite;
+
+    &-size {
+        &_s {
+            width: 24px;
+            height: 24px;
+        }
+
+        &_m {
+            width: 48px;
+            height: 48px;
+        }
+
+        &_l {
+            width: 60px;
+            height: 60px;
+        }
+    }
+
+    &-color {
+        &_primary {
+            color: $brand
+        }
+
+        &_secondary {
+            color: #fff;
+        } 
+    }
+
+}
+
+@keyframes rotate-animation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes opacity-animation {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
