@@ -1,4 +1,4 @@
-import { ITransport, RequestOptions } from "@api/types";
+import { IClient, ITransport, RequestOptions } from "@api/types";
 import AxiosClient from "./axios";
 import FetchClient from "./fetch";
 import TokenStorage from "@services/TokenStorage";
@@ -21,11 +21,12 @@ type QueuedRequest<T> = RequestInit & {
   reject: (reason?: unknown) => void;
 };
 
-export default class ApiClient {
+export default class ApiClient implements IClient {
     private client: ITransport;
     private requestQueue: QueuedRequest<unknown>[] = [];
     private _isRefreshing = false;
     private _refreshFailed = false;
+    private onAuthError: (() => void) | null = null;
 
     constructor() {
         this.client = new Client();
@@ -41,6 +42,10 @@ export default class ApiClient {
 
     resetRefreshFailed(): void {
         this._refreshFailed = false;
+    }
+
+    setAuthErrorHandler(handler: () => void): void {
+        this.onAuthError = handler;
     }
 
     private initRequest = async <T = unknown>(args: RequestInit) => {
@@ -123,6 +128,7 @@ export default class ApiClient {
         } catch {
             this._refreshFailed = true;
             this._isRefreshing = false;
+            this.onAuthError?.();
             this.rejectQueue();
         } 
     }

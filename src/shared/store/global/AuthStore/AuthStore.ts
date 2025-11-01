@@ -54,6 +54,7 @@ export default class AuthStore {
         });
 
         this.api = api;
+        this.api._client.setAuthErrorHandler(this.logout.bind(this))
     }
 
     get user(): User | null {

@@ -22,5 +22,6 @@ export interface ITransport {
 
 export interface IClient extends ITransport {
  resetRefreshFailed: () => void;
+ setAuthErrorHandler: (handler: () => void) => void; 
 }
 
