@@ -1,26 +1,15 @@
 import axios, { AxiosInstance, isCancel, type AxiosResponse } from 'axios';
-import { AuthRequestConfig, RequestOptions } from '../types';
-import UserStorage from 'src/shared/services/UserStorage';
+import { ITransport, RequestOptions } from '../types';
+import { ApiError } from '@api/utils/handle-response';
 
-export default class AxiosClient {
+export default class AxiosClient implements ITransport {
   private instance: AxiosInstance;
 
-  constructor(baseURL?: string) {
+  constructor() {
     this.instance = axios.create({
-      baseURL: baseURL ?? process.env.NEXT_PUBLIC_API_BASE_URL,
       headers: {
         'Content-Type': 'application/json',
       },
-    });
-  
-    this.instance.interceptors.request.use((config: AuthRequestConfig) => {
-      if (config.requiredAuth) {
-        const token = UserStorage.getToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-      }
-      return config;
     });
 
     this.instance.interceptors.response.use(
@@ -32,12 +21,17 @@ export default class AxiosClient {
           return Promise.reject(new DOMException('Request aborted', 'AbortError'));
         }
 
-        if (error?.response) {
-          return Promise.reject(new Error(error.response.data.error.message ?? 'ServerError'));
+        if (error.response) {
+          const apiError: ApiError = {
+            status: error.response.status,
+            message: error.response.data?.error?.message ?? error.response.statusText,
+            details: error.response.data ?? null,
+          };
+          return Promise.reject(apiError);
         }
 
         if (error.request) {
-          return Promise.reject(new Error('NetworkError'));
+          return Promise.reject(new TypeError('Network error: сервер недоступен'));
         }
 
         return Promise.reject(new Error('UnknownError'));
@@ -56,4 +50,3 @@ export default class AxiosClient {
     return this.instance.post(url, data, clearedOptions);
   };
 };
-

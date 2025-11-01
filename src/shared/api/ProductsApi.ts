@@ -1,65 +1,68 @@
-import { ProductApiType, ProductType } from "@model/products";
+import { ProductApiType, ProductType } from "@model/product";
 import { QueryParams } from "@model/query-params";
-import { isStrapiSuccessResponseProducts, StrapiResponseProducts } from "@model/strapi-api";
 import { IClient, RequestOptions } from "./types";
 import { buildQueryString } from "./utils/build-query-string";
 import formateError from "./utils/formate-error";
-import sortProducts from "./utils/sort-products";
 
 export default class ProductsApi {
-    private client: IClient;
-    private populate = ['images', 'productCategory'];
+    private _client: IClient;
+    private _baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
      
     constructor(client: IClient) {
-        this.client = client;
+        this._client = client;
     }
-
-    private createGetProductListURL = (query: QueryParams): string => {
-        const queryString = buildQueryString({
-        ...query,
-        populate: this.populate,
-      });
-
-      return `/products?${queryString}`;
-    };
-
-    private createGetProductDetailsURL = (id: string ): string => {
-      const queryString = buildQueryString({ populate: this.populate });
-
-      return `/products/${id}?${queryString}`;
-    };
     
     getProductList = async (params: QueryParams, { signal, next }: RequestOptions) => {
         try {
-            const response = await this.client.get<StrapiResponseProducts<ProductApiType[]>>(
-                this.createGetProductListURL(params),
+            const response = await this._client.get<ProductApiType[]>(
+                this._createGetProductListURL(params),
                 { signal, next }
             );
 
-            if (!isStrapiSuccessResponseProducts(response)) {
-                throw new Error(response.error.message);
-            }
-            response.data = sortProducts(response.data, params.sort);
             return response;
         } catch (err) {
             throw formateError(err);
         }
     };
 
-    getProductDetails = async (id: ProductType['documentId'], { signal, next }: RequestOptions) => {
+    getProductDetails = async (id: ProductType['id'], { signal, next }: RequestOptions) => {
         try {
-            const response = await this.client.get<StrapiResponseProducts<ProductApiType>>(
-                this.createGetProductDetailsURL(id),
+            const response = await this._client.get<ProductApiType>(
+                this._createGetProductDetailsURL(id),
                 { signal, next }
             );
-
-            if (!isStrapiSuccessResponseProducts(response)) {
-                throw new Error(response.error.message);
-            }
 
             return response;
         } catch (err) {
             throw formateError(err);
         }
+    };
+
+    getRelatedProducts = async (id: ProductType['id'], { signal, next }: RequestOptions) => {
+        try {
+            const response = await this._client.get<ProductApiType[]>(
+                this._createGetRelatedProductsURL(id),
+                { signal, next }
+            );
+
+            return response;
+        } catch (err) {
+            throw formateError(err);
+        }
+    };
+
+    private _createGetProductListURL = (query: QueryParams): string => {
+        const queryString = buildQueryString(query);
+
+        return `${this._baseUrl}/products?${queryString}`;
+    };
+
+    private _createGetProductDetailsURL = (id: ProductType['id'] ): string => {
+        return `${this._baseUrl}/products/${id}`;
+    };
+
+    private _createGetRelatedProductsURL = (id: ProductType['id']): string => {
+        const queryString = buildQueryString({ limit: 12 });
+        return `${this._baseUrl}/products/${id}/related?${queryString}`;
     };
 }

@@ -9,10 +9,8 @@ import { META_STATUS } from '@constants/meta-status';
 import { useProductsStore } from '@providers/ProductsStoreProvider';
 import { useRootStore } from '@providers/RootStoreContext';
 import SearchQuery from './components/SearchQuery';
-import CategoriesFilter from './components/CategoriesFilter';
-import Text from '@components/Text';
-import CheckBox from '@components/CheckBox';
 import SingleDropdown from '@components/SingleDropdown';
+import PriceFilter from './components/PriceFilter';
 
 const ProductSearch = () => {
   const { categoriesStore, queryParamsStore } = useRootStore();
@@ -21,10 +19,6 @@ const ProductSearch = () => {
 
   const handleInputCrossClick = useCallback(() => {
     searchStore.changeInput('');
-  }, [searchStore]);
-
-  const handleFilterCrossClick = useCallback(() => {
-    searchStore.setCategories([]);
   }, [searchStore]);
 
   const handleSearchClick = useCallback(() => {
@@ -56,6 +50,14 @@ const ProductSearch = () => {
         searchStatus={productsStore.status}
         className={clsx(style['search__query'])}
       />
+
+      <SingleDropdown 
+        options={searchStore.categoryOptions}
+        selectedOption={searchStore.selectedCategoryOption}
+        onSelect={searchStore.setCategory}
+        getTitle={() => searchStore.titleCategoryValue}
+        className={clsx(style['search__categories-filter'])} 
+      />
       
       <SingleDropdown 
         options={searchStore.sortOptions}
@@ -65,27 +67,14 @@ const ProductSearch = () => {
         className={clsx(style['search__sort'])} 
       />
       
-      <CategoriesFilter
-        options={searchStore.categoriesOptions}
-        selectedOptions={searchStore.selectedCategoriesOptions}
-        onSelect={searchStore.setCategories}
-        getTitle={() => searchStore.titleCategoriesValue}
-        status={categoriesStore.status}
-        onFilterCrossClick={handleFilterCrossClick}
-        className={clsx(style['search__categories-filter'])} 
+      <PriceFilter
+        minValue={searchStore.minPrice}
+        onChangeMin={searchStore.setMinPrice}
+        maxValue={searchStore.maxPrice}
+        onChangeMax={searchStore.setMaxPrice}
+        className={clsx(style['search__price'])} 
       />
 
-      <label className={clsx(style['search__stock'])}>
-        <Text className={clsx(style['search__stock-description'])}>
-          Только доступные для заказа:
-        </Text>
-        <CheckBox
-          className={clsx(style['search__stock-icon'])}
-          checked={!!searchStore.inStock}
-          onChange={() => {searchStore.setInStock(!searchStore.inStock);}} 
-          checkSize="small"
-        />
-      </label>
     </div>
   );
 };

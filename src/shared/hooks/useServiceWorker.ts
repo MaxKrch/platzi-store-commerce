@@ -1,3 +1,4 @@
+import 'client-only';
 import { useEffect } from "react";
 
 const useServiceWorker = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@components/Button";
-import { ProductType } from "@model/products";
+import { ProductType } from "@model/product";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRootStore } from "@providers/RootStoreContext";
 import { observer } from "mobx-react-lite";
@@ -16,7 +16,7 @@ export type DefaultCardActionSlot = {
 }
 
 const DefaultCardActionSlot: React.FC<DefaultCardActionSlot> = ({ product, priority = 'primary', className }) => {
-  const { cartStore, userStore, modalStore } = useRootStore();
+  const { cartStore, authStore, modalStore } = useRootStore();
   const [mounted, setMounted] = useState(false);
   const productFromCart = cartStore.getProductById(product.id);
   const count =  productFromCart?.quantity ?? 0;
@@ -27,31 +27,31 @@ const DefaultCardActionSlot: React.FC<DefaultCardActionSlot> = ({ product, prior
 
   const handleClick = useCallback(
     (product: ProductType) => {
-      if(!userStore.isAuthorized) {
+      if(!authStore.isAuthorized) {
         modalStore.open('auth');
         return;
       }
 
       cartStore.addToCart(product);
     },
-    [cartStore, modalStore, userStore.isAuthorized]
+    [cartStore, modalStore, authStore.isAuthorized]
   );
 
   const handleAddProduct = useCallback(() => {
-      if(!userStore.isAuthorized) {
+      if(!authStore.isAuthorized) {
         modalStore.open('auth');
         return;
       }
       cartStore.addToCart(product);
-  }, [cartStore, product, modalStore, userStore.isAuthorized]);
+  }, [cartStore, product, modalStore, authStore.isAuthorized]);
 
   const handleRemoveProduct = useCallback(() => {
-      if(!userStore.isAuthorized) {
+      if(!authStore.isAuthorized) {
         modalStore.open('auth');
         return;
       }
       cartStore.removeFromCart(product);
-  }, [cartStore, product, modalStore, userStore.isAuthorized]);
+  }, [cartStore, product, modalStore, authStore.isAuthorized]);
 
   return (
     <div className={clsx(style['action-slot'], className)}>

@@ -1,14 +1,12 @@
-import { User, UserApi } from "@model/auth";
+import { User, UserApi } from "@model/user";
 
 const normalizeUser = (from: UserApi): User => {
     return ({
         id: from.id,
-        username: from.username,
         email: from.email,
-        confirmed: from.confirmed,
-        blocked: from.blocked,
-        createdAt: new Date(from.createdAt),
-        updatedAt: new Date(from.updatedAt)
+        name: from.name,
+        role: from.role,
+        avatar: from.avatar
     });
 };
 

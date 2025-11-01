@@ -20,7 +20,7 @@ export const RootStoreProvider: React.FC<PropsWithChildren> = ({ children }) => 
   const path = usePathname();
   const queryParams = useSearchParams();
   const createClient = () => new Client();
-  client = client ?? createClient() ;  
+  client = client ?? createClient();  
   
   const rootStore = useCreateRootStore({ client, path, queryParams });
 

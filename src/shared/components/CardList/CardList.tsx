@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import React from 'react';
 import style from './CardList.module.scss';
 import Card, { CardProps } from '@components/Card/Card';
-import { ProductType } from '@model/products';
+import { ProductType } from '@model/product';
 
 export type CardListProps = Pick<CardProps, 'PriceSlot' | 'CaptionSlot' |  'PriceSlot' | 'ActionSlot' | 'className'> & {
   display?: 'preview' | 'full';
@@ -21,7 +21,7 @@ const CardList: React.FC<CardListProps> = ({
     <div className={clsx(style['card-list__wrapper'], className)}>
       <ul className={clsx(style['card-list'])}>
         {products.map((product) => (
-          <li key={product.documentId}>
+          <li key={product.id}>
             <Card
               display={display}
               className={clsx(style['card-list__item'])}

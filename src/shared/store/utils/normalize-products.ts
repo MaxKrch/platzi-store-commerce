@@ -1,20 +1,17 @@
-import { ProductApiType, ProductType } from "@model/products";
+import { ProductApiType, ProductType } from "@model/product";
 
 
 const normalizeProductItem = (from: ProductApiType): ProductType => ({
   id: from.id,
-  documentId: from.documentId,
   title: from.title,
-  description: from.description,
   price: from.price,
-  discountPercent: from.discountPercent,
-  rating: from.rating,
-  isInStock: from.isInStock,
+  description: from.description,
+  categoryId: from.categoryId,
+  category: from.category,
   images: from.images,
-  createdAt: new Date(from.createdAt),
+  slug: from.slug,
+  creationAt:	new Date(from.creationAt),
   updatedAt: new Date(from.updatedAt),
-  publishedAt: new Date(from.publishedAt),
-  productCategory: from.productCategory,
 });
 
 const normalizeProductList = (from: ProductApiType[]): ProductType[] => {

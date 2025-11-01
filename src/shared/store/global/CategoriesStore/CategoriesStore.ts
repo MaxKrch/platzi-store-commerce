@@ -1,5 +1,4 @@
 import { Collection } from "@model/collections";
-import { ProductCategoryApiType, ProductCategoryType } from "@model/products";
 import getInitialCollection from "@store/utils/get-initial-collection";
 import { META_STATUS, MetaStatus } from "@constants/meta-status";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
@@ -7,7 +6,7 @@ import CategoriesApi from "@api/CategoriesApi";
 import { linearizeCollection } from "@store/utils/linearize-collection";
 import { normalizeCollection } from "@store/utils/normalize-collection";
 import { normalizeCategoriesList } from "@store/utils/normalize-categories";
-import { MetaResponse } from "@model/strapi-api";
+import { ProductCategoryApiType, ProductCategoryType } from "@model/category";
 
 export type ICategoriesStore = {
   getCategoryById: (id: ProductCategoryType['id']) => ProductCategoryType | undefined;
@@ -16,7 +15,6 @@ export type ICategoriesStore = {
 export type CategoriesInitData = {
     success: true,
     categories: ProductCategoryApiType[],
-    meta: MetaResponse<ProductCategoryApiType[]>
 } | {
     success: false,
     error: string,
@@ -24,14 +22,12 @@ export type CategoriesInitData = {
 
 type PrivateFields = 
   | '_status' 
-  | '_meta' 
   | '_error'
   | '_setCategories';
 
 export default class CategoriesStore implements ICategoriesStore {
   private _api: CategoriesApi;
   private _status: MetaStatus = META_STATUS.IDLE;
-  private _meta: MetaResponse<CategoriesApi[]> | null = null;
   private _abortCtrl: AbortController | null = null;
   private _error: string | null = null;
   private _isInitialized = false;
@@ -42,12 +38,10 @@ export default class CategoriesStore implements ICategoriesStore {
       _list: observable,
       _status: observable,
       _error: observable,
-      _meta: observable,
 
       list: computed,
       status: computed,
       error: computed,
-      pagination: computed,
 
       setInitData: action.bound,
       fetchCategories: action.bound,
@@ -66,10 +60,6 @@ export default class CategoriesStore implements ICategoriesStore {
 
   get error(): string | null {
     return this._error;
-  }
-
-  get pagination(): MetaResponse<ProductCategoryType[]>['pagination'] | undefined {
-    return this._meta?.pagination;
   }
 
   private _setCategories(categories: ProductCategoryApiType[]): void {
@@ -99,7 +89,6 @@ export default class CategoriesStore implements ICategoriesStore {
     }
 
     this._status = META_STATUS.SUCCESS;
-    this._meta = init.meta;
     this._setCategories(init.categories);
   }
 
@@ -108,7 +97,7 @@ export default class CategoriesStore implements ICategoriesStore {
   }
 
   getCategoryById(id: ProductCategoryType['id']): ProductCategoryType | undefined {
-    return this._list.entities[id];
+    return this._list.entities.get(id);
   }
 
   abort(): void {
@@ -124,7 +113,6 @@ export default class CategoriesStore implements ICategoriesStore {
 
     runInAction(() => {
       this._status = META_STATUS.PENDING;
-      this._meta = null;
       this._list = getInitialCollection();
     });
 
@@ -132,8 +120,7 @@ export default class CategoriesStore implements ICategoriesStore {
       const response = await this._api.getCategories({ signal: this._abortCtrl.signal });
       
       runInAction(() => {     
-        this._setCategories(response.data);
-        this._meta = response.meta;
+        this._setCategories(response);
         this._status = META_STATUS.SUCCESS; 
       });
 

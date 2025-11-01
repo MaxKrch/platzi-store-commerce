@@ -2,10 +2,9 @@
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
 import style from './RelatedProducts.module.scss';
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { ReactNode, useCallback, useMemo } from 'react';
 import { useProductsStore } from '@providers/ProductsStoreProvider';
 import { useProductDetailsStore } from '@providers/ProductDetailsStoreProvider';
-import { useParams } from 'next/navigation';
 import { META_STATUS } from '@constants/meta-status';
 import Text from '@components/Text';
 import CardList from '@components/CardList';
@@ -20,16 +19,12 @@ import DefaultCardActionSlot from '@components/Card/slots/DefaultCardActionSlot'
 const RelatedProducts: React.FC = () => {
   const productDetailsStore = useProductDetailsStore();
   const productsStore = useProductsStore();
-  const isFirstRender = useRef(true);
-  const { id: productId } = useParams();
 
   const refetch = useCallback(() => {
     const currentProduct = productDetailsStore.product;
 
     if(currentProduct) {
-      productsStore.fetchProducts({
-        categories: [currentProduct.productCategory.id],
-      });
+      productsStore.fetchProducts({ category: currentProduct.categoryId });
     }
   }, [productsStore, productDetailsStore.product]);
   
@@ -38,29 +33,6 @@ const RelatedProducts: React.FC = () => {
     [productsStore.products, productDetailsStore.product]
   );
   
-  useEffect(() => {   
-    if(isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-  
-    if(productDetailsStore.status === META_STATUS.PENDING) {
-      let productCategory: number[] = [];
-      
-      if(typeof productId === 'string') {
-        const targetProduct = productsStore.findProductByDocumentId(productId);
-      
-        if(targetProduct) {
-          productCategory = [targetProduct.productCategory.id];
-        }
-      }
-       
-      productsStore.fetchProducts({
-        categories: productCategory
-      });
-    }
-  }, [productId, productsStore, productDetailsStore, productDetailsStore.status]);
-
   const isFailedRequest = productsStore.status === META_STATUS.ERROR;
   const notFoundProducts = productsStore.status === META_STATUS.SUCCESS && productsStore.products.length === 0;
   const showRelatedProducts = productsStore.status === META_STATUS.SUCCESS && productDetailsStore.status === META_STATUS.SUCCESS; 

@@ -9,7 +9,6 @@ import Button from '@components/Button';
 
 const CartSummary: React.FC<{className?: string }> = ({ className }) => {
   const { cartStore } = useRootStore();
-  const discounter = cartStore.totalPrice - cartStore.totalDiscountedPrice;
   return (
     <div className={className}>
       <section className={clsx(style['summary'])}>
@@ -20,20 +19,13 @@ const CartSummary: React.FC<{className?: string }> = ({ className }) => {
           <Text className={clsx(style['summary__total-title'])}>Всего товаров:</Text>
           <Text className={clsx(style['summary__total-value'])}>{cartStore.totalItemsToOrder}</Text>
         </div>
-        {discounter > 0 &&
-          <div className={clsx(style['summary__total'])}>
-            <Text className={clsx(style['summary__total-title'])}>Ваша скидка:</Text>
-            <Text className={clsx(style['summary__total-value'])}>${discounter}</Text>
-          </div>
-        }
+
         <div className={clsx(style['summary__total'])}>
           <Text className={clsx(style['summary__total-title'])}>Сумма заказа:</Text>
-          {discounter > 0 &&
-            <Text className={clsx(style['summary__total-value'], style['summary__total-value_through'])}>${cartStore.totalPrice}</Text>
-          }            
-          <Text className={clsx(style['summary__total-value'])}>${cartStore.totalDiscountedPrice}</Text>
+           
+          <Text className={clsx(style['summary__total-value'])}>${cartStore.totalPrice}</Text>
         </div>
-        <Button disabled={cartStore.inStockProducts.length === 0} className={clsx(style['summary__button'])}>Перейти к оплате</Button>
+        <Button disabled={cartStore.products.length === 0} className={clsx(style['summary__button'])}>Перейти к оплате</Button>
       </section>
     </div>
   );

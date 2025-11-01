@@ -15,8 +15,12 @@ export type AuthRequestConfig = {
   requiredAuth?: boolean;
 } & InternalAxiosRequestConfig;
 
-export interface IClient {
+export interface ITransport {
   get<T = unknown>(url: string, options?: RequestOptions): Promise<T>;
   post<T = unknown, P extends object = object>(url: string, data: P, options?: RequestOptions): Promise<T>;
+}
+
+export interface IClient extends ITransport {
+ resetRefreshFailed: () => void;
 }
 

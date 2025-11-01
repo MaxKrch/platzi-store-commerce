@@ -7,14 +7,6 @@ export const SORT_VARIABLES = {
       order: 'desc',
     },
   },
-  popular: {
-    key: 'popular',
-    label: 'Популярные',
-    api: {
-      field: 'rating',
-      order: 'desc',
-    },
-  },
   price_asc: {
     key: 'price_asc',
     label: 'Сначала дешевле',
@@ -28,14 +20,6 @@ export const SORT_VARIABLES = {
     label: 'Сначала дороже',
     api: {
       field: 'price',
-      order: 'desc',
-    },
-  },
-  discount: {
-    key: 'discount',
-    label: 'Со скидкой',
-    api: {
-      field: 'discountPercent',
       order: 'desc',
     },
   },

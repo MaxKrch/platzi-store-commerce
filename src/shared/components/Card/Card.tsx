@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React, { memo, PropsWithChildren } from 'react';
 import style from './Card.module.scss';
 import ImageGallery from '@components/ImageGallery';
-import { ProductType } from '@model/products';
+import { ProductType } from '@model/product';
 import Link from 'next/link';
 import { appRoutes } from '@constants/app-routes';
 import Text from '@components/Text';
@@ -27,13 +27,13 @@ const Card: React.FC<CardProps> = ({
   className,
 }) => {
   const { images, description, title } = product;
-  const href = appRoutes.product.create(product.documentId);
+  const href = appRoutes.product.create(product.id);
   const imageSizes = getCardImageSizes(display);
 
   const BodyComponent = display === 'full'
     ? ({children}: PropsWithChildren) => <div>{children}</div>
     : ({children}: PropsWithChildren) => <Link href={href}>{children}</Link>; 
-
+    
   return (
     <article className={clsx(style['card'], style[display], className)}>
       <div className={clsx(style['card__image-wrapper'], style[`${display}__image-wrapper`])}>      
@@ -43,7 +43,7 @@ const Card: React.FC<CardProps> = ({
           <Link href={href} className={clsx(style['card__image-link'])}>
             <Image
               className={clsx(style['card__image'])}
-              src={images[0].url}
+              src={images[0]}
               alt={title ? title.toString() : 'Card image'}
               sizes={imageSizes}
               priority

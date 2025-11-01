@@ -1,24 +1,14 @@
-import { STORAGE_KEYS } from "@constants/storage";
-import { User } from "@model/auth";
+"use client";
+
+import { User } from "@model/user";
 
 export default class UserStorage {
-    static getToken(): string | null {
-        let token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-       
-        if(!token) {
-            token = sessionStorage.getItem(STORAGE_KEYS.TOKEN) ?? null;
-        }
-
-        return token;
-    }
-
+    private static USER_KEY = "user";
+    private static KEEP_LOGGED_KEY = "keepMeLoggedIn";
+    
     static getUser(): User | null {
-        let userJSON = localStorage.getItem(STORAGE_KEYS.USER);
-
-        if(!userJSON) {
-            userJSON = sessionStorage.getItem(STORAGE_KEYS.USER);      
-        }
-
+        const userJSON = localStorage.getItem(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY);      
+        
         if(!userJSON) {
             return null;
         }
@@ -26,18 +16,24 @@ export default class UserStorage {
         return JSON.parse(userJSON);
     }
 
-    static setToken(token: string, storage: Storage = localStorage): void {
-        storage.setItem(STORAGE_KEYS.TOKEN, token);
-    }
+    static setUser(user: User, save: boolean): void {
+        const storage = save ? localStorage : sessionStorage;
+        storage.setItem(this.USER_KEY, JSON.stringify(user));
 
-    static setUser(user:User, storage: Storage = localStorage): void {
-        storage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+        if(save) {
+            localStorage.setItem(this.KEEP_LOGGED_KEY, "true");
+        } else {
+            localStorage.removeItem(this.KEEP_LOGGED_KEY);
+        }
     }
 
     static clearStorage(): void {
-        localStorage.removeItem(STORAGE_KEYS.USER);
-        localStorage.removeItem(STORAGE_KEYS.TOKEN);
-        sessionStorage.removeItem(STORAGE_KEYS.USER);
-        sessionStorage.removeItem(STORAGE_KEYS.TOKEN);
+        localStorage.removeItem(this.USER_KEY);
+        sessionStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.KEEP_LOGGED_KEY);
+    }
+
+    static shouldKeepLogged(): boolean {
+        return localStorage.getItem(this.KEEP_LOGGED_KEY) === "true";
     }
 }

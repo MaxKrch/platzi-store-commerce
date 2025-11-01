@@ -2,8 +2,8 @@ import { Collection } from "@model/collections";
 
 const getInitialCollection = <K extends string | number, V = unknown>(): Collection<K, V> => {
   return {
-    order: [] as K[],
-    entities: {} as Record<K, V>,
+    order: new Set(),
+    entities: new Map(),
   };
 };
 export default getInitialCollection;

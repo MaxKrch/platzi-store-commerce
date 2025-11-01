@@ -2,7 +2,7 @@
 import { clsx } from 'clsx';
 import CardList from '@components/CardList';
 import { observer } from 'mobx-react-lite';
-import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import style from './ProductList.module.scss';
 import { useProductsStore } from '@providers/ProductsStoreProvider';
 import { META_STATUS } from '@constants/meta-status';
@@ -16,13 +16,18 @@ import DefaultCardCaptionSlot from '@components/Card/slots/DefaultCardCaptionSlo
 import DefaultCardPriceSlot from '@components/Card/slots/DefaultCardPriceSlot';
 import DefaultCardActionSlot from '@components/Card/slots/DefaultCardActionSlot';
 import { useRootStore } from '@providers/RootStoreContext';
+import sortProducts from '@utils/sort-products';
+import { QueryParams } from '@model/query-params';
 
 const ProductList: React.FC = () => {
   const isFirstRender = useRef(true);
-  const prevQueryString = useRef<string | null>(null);
+  const prevQuery = useRef<QueryParams | null>(null);
   const requestId = useRef<string | null>(null);
   const productsStore = useProductsStore();
   const { queryParamsStore } = useRootStore();
+  const sortedProducts = useMemo(() => {
+    return sortProducts(productsStore.products, queryParamsStore.sort);
+  }, [productsStore.products, queryParamsStore.sort]);
   
   const refetch = useCallback(() => {
     productsStore.fetchProducts(queryParamsStore.queryObject);
@@ -33,18 +38,30 @@ const ProductList: React.FC = () => {
       isFirstRender.current = false;
       return;
     }
-
-    const nextQueryString = queryParamsStore.queryString;
-    if (nextQueryString === prevQueryString.current) {
+   
+    if (
+      queryParamsStore.category === prevQuery.current?.category && 
+      queryParamsStore.query === prevQuery.current?.query &&
+      queryParamsStore.minPrice === prevQuery.current?.minPrice &&
+      queryParamsStore.maxPrice === prevQuery.current?.maxPrice &&
+      queryParamsStore.page === prevQuery.current?.page
+    ) {
       return;
     } 
 
     const id = `${Date.now()}-${Math.random()}`;
     requestId.current = id;
-    prevQueryString.current = nextQueryString;
+    
+    prevQuery.current = {
+      category: queryParamsStore.category,
+      query: queryParamsStore.query,
+      minPrice: queryParamsStore.minPrice,
+      maxPrice: queryParamsStore.maxPrice,
+      page: queryParamsStore.page
+    };
 
     productsStore.fetchProducts(queryParamsStore.queryObject, id);
-  }, [queryParamsStore.queryObject, queryParamsStore.queryString, productsStore]);
+  }, [queryParamsStore, queryParamsStore.queryString, productsStore]);
 
   if(productsStore.error === 'NotFound' || productsStore.error === 'Not Found') {
     notFound();
@@ -90,12 +107,12 @@ const ProductList: React.FC = () => {
               Найдено товаров
             </Text>
             <Text view="p-20" color="secondary" className={clsx(style['product-list-title__count'])}>
-              {productsStore.pagination?.total}
+              {productsStore.products.length}
             </Text>
           </div>
           <CardList
             display="preview"
-            products={productsStore.products}
+            products={sortedProducts}
             CaptionSlot={DefaultCardCaptionSlot}
             PriceSlot={DefaultCardPriceSlot}
             ActionSlot={DefaultCardActionSlot}

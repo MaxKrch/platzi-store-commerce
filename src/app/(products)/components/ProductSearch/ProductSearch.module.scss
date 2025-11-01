@@ -8,24 +8,24 @@
     grid-template-areas: 
         "query"
         "categories"
-        "sort"
-        "stock";
+        "price"
+        "sort";
     gap: $space-xxxl;
     width: 100%;
     
     @include tablet-up() {
-        grid-template-columns: min(50%, 400px) auto;
+        grid-template-columns: min(50%, 350px) auto;
         grid-template-areas: 
             "query query"
-            "categories sort"
-            "stock stock";       
+            "categories price"
+            "sort price";       
     }
 
     @include laptop-up() {
-        grid-template-areas: 
+          grid-template-areas: 
             "query query"
-            "categories sort"
-            "stock stock";    
+            "categories price"
+            "sort sort";       
     }
 
     &__query {
@@ -35,18 +35,22 @@
 
     &__categories-filter {
         grid-area: categories;
-    }
-
-    &__sort {
-        grid-area: sort;
-            margin-right: 50px;
+        
         @include tablet-up() {
             max-width: 350px;
         }
     }
 
-    &__stock {
-        grid-area: stock;
+    &__sort {
+        grid-area: sort;
+        
+        @include tablet-up() {
+            max-width: 350px;
+        }
+    }
+
+    &__price {
+        grid-area: price;
         display: flex;
         align-items: flex-end;
         gap: $space-xxxs;

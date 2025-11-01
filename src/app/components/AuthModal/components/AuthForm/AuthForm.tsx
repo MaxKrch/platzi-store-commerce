@@ -48,7 +48,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     useEffect(() => {
         if (mode === AUTH_MODES.LOGIN) {
-            resetField('email');
+            resetField('login');
         }
     }, [mode, resetField]);
 
@@ -65,34 +65,35 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
     return(
         <form onSubmit={handleSubmit(onSubmit)} className={clsx(style['form'])}>
-            <label className={clsx(style['form__label'])}>
-                <UserIcon className={clsx(style['form__icon'])}/>
-                <Input
-                    onFocus={() => handleFocus('login')}
-                    placeholder="Логин"
-                    className={clsx(style['form__input'], errors.login && style['form__input_error'])}
-                    {...register('login')}
-                />
-                <div className={clsx(style['form__error'])}>
-                    {errors.login && errors.login.message}
-                </div>
-            </label>
-            
             {mode === AUTH_MODES.REGISTER &&
                 <label className={clsx(style['form__label'])}>
-                    <MailIcon className={clsx(style['form__icon'])}/>
-                    <Input 
-                        onFocus={() => handleFocus('email')}
-                        placeholder="Email"
-                        className={clsx(style['form__input'], errors.email && style['form__input_error'])}
-                        type='email'
-                        {...register('email')}
+                    <UserIcon className={clsx(style['form__icon'])}/>
+                    <Input
+                        onFocus={() => handleFocus('login')}
+                        placeholder="Логин"
+                        className={clsx(style['form__input'], errors.login && style['form__input_error'])}
+                        {...register('login')}
                     />
                     <div className={clsx(style['form__error'])}>
-                        {errors.email && errors.email.message}
-                    </div>                        
+                        {errors.login && errors.login.message}
+                    </div>
                 </label>
             }
+            
+            <label className={clsx(style['form__label'])}>
+                <MailIcon className={clsx(style['form__icon'])}/>
+                <Input 
+                    onFocus={() => handleFocus('email')}
+                    placeholder="Email"
+                    className={clsx(style['form__input'], errors.email && style['form__input_error'])}
+                    type='email'
+                    {...register('email')}
+                />
+                <div className={clsx(style['form__error'])}>
+                    {errors.email && errors.email.message}
+                </div>                        
+            </label>
+            
             
             <label className={clsx(style['form__label'])}>
                 <KeyIcon className={clsx(style['form__icon'])}/>

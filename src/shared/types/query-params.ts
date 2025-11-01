@@ -1,10 +1,10 @@
 import { SortKeys } from "@constants/product-sort";
 
 export type QueryParams = Partial<{
-  page: number;
-  count: number;
-  categories: number[];
+  category: number | null;
   query: string;
   sort: SortKeys;
-  inStock: boolean;
+  page: number | null;
+  minPrice: number | null;
+  maxPrice: number | null;
 }>

@@ -7,8 +7,9 @@ export const linearizeCollection = <K extends string | number, T>(
     return [];
   }
 
-  const linearized = elements.order
-    .map((id) => elements.entities[id])
+  const linearized = [...elements.order]
+    .map((id) => elements.entities.get(id))
     .filter((item): item is T => item !== undefined);
+    
   return linearized;
 };

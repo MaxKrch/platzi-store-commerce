@@ -11,10 +11,9 @@ import AuthHeader  from './components/AuthHeader/AuthHeader';
 import AuthForm from './components/AuthForm/AuthForm';
 import { AUTH_MODES, AuthModes } from './constants';
 import { Schema } from './AuthModal.schema';
-import { META_STATUS } from '@constants/meta-status';
 
 const AuthModal: React.FC = () => {
-    const { modalStore, userStore } = useRootStore();
+    const { modalStore, authStore } = useRootStore();
     const [authMode, setAuthMode] = useState<AuthModes>(AUTH_MODES.LOGIN);
     const [error, setError] = useState<string | null>(null);
     const errorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -23,40 +22,42 @@ const AuthModal: React.FC = () => {
         let result: { success: boolean };
 
         if(authMode === AUTH_MODES.REGISTER) {
-            if(!data.email) {
+            if(!data.login) {
                 return;
             }
 
-            result = await userStore.register({
-                username: data.login,
+            result = await authStore.register({
+                name: data.login,
                 password: data.password,
-                email: data.email
-                
-            }, data.saveMe);
+                email: data.email,
+                avatar: 'https://avatar.iran.liara.run/public',
+                keepMeLoggedIn: data.saveMe,
+            });
 
         } else {
-            result = await userStore.login({
-                identifier: data.login,
+            result = await authStore.login({
+                email: data.email,
                 password: data.password,
-            }, data.saveMe);
+                keepMeLoggedIn: data.saveMe,
+            });
         }
 
         if(!result.success) {
             if(errorTimer.current) {
                 clearTimeout(errorTimer.current);
             }
-            setError(userStore.error);
+            setError(authStore.error);
             errorTimer.current = setTimeout(() => setError(null), 3 * 1000);
             
             return;
         }
         
         modalStore.close();
-    }, [userStore, modalStore, authMode]);
+    }, [authStore, modalStore, authMode]);
 
     const shouldShow = modalStore.isOpen 
         && modalStore.mode === MODES.AUTH 
-        && !userStore.isAuthorized; 
+        && !authStore.isAuthorized; 
 
     if(!shouldShow) {
         return null;
@@ -71,7 +72,7 @@ const AuthModal: React.FC = () => {
                     onSubmit={handleSubmit} 
                     needReset={!modalStore.isOpen} 
                     error={error} 
-                    loading={userStore.status === META_STATUS.PENDING}
+                    loading={authStore.isPending}
                 />
             </div>
         </ModalPortal>

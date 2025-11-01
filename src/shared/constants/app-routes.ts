@@ -1,4 +1,4 @@
-import { ProductType } from "@model/products";
+import { ProductType } from "@model/product";
 
 export const appRoutes = {
   main: {
@@ -7,7 +7,7 @@ export const appRoutes = {
   },
   product: {
     mask: '/:id',
-    create: (id: ProductType['documentId']) => `/${id}`,    
+    create: (id: ProductType['id']) => `/${id}`,    
   },
   categories: {
     mask: '/categories',

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import style from './ProductCardAction.module.scss';
-import { ProductType } from '@model/products';
+import { ProductType } from '@model/product';
 import { useRouter } from 'next/navigation';
 import { appRoutes } from '@constants/app-routes';
 import Button from '@components/Button';
@@ -10,12 +10,12 @@ import { observer } from 'mobx-react-lite';
 import DefaultCardActionSlot from '@components/Card/slots/DefaultCardActionSlot';
 
 const ProductCardAction: React.FC<{ product: ProductType }> = ({ product }) => {
-  const { cartStore, userStore, modalStore } = useRootStore();
+  const { cartStore, authStore, modalStore } = useRootStore();
   const router = useRouter();
 
   const handlePrimaryBtn = useCallback(
     (product: ProductType) => {
-      if(!userStore.isAuthorized) {
+      if(!authStore.isAuthorized) {
         modalStore.open('auth');
         return;
       }
@@ -23,7 +23,7 @@ const ProductCardAction: React.FC<{ product: ProductType }> = ({ product }) => {
       cartStore.addToCart(product);
       router.push(appRoutes.cart.create());
     },
-    [cartStore, router, modalStore, userStore.isAuthorized]
+    [cartStore, router, modalStore, authStore.isAuthorized]
   );
 
   return (

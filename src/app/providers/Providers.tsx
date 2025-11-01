@@ -7,6 +7,7 @@ import style from '../app.module.scss';
 import ModalsProvider from './ModalsProvider';
 import ServiceWorkerProvider from './ServiceWorkerProvider';
 import PathStoreProvider from './PathStoreProvider';
+import InitAppProvider from './InitAppProvider';
 
 const Providers: React.FC<PropsWithChildren> = ({children}) => {
     return(
@@ -22,7 +23,9 @@ const Providers: React.FC<PropsWithChildren> = ({children}) => {
                     <PathStoreProvider>
                         <QueryParamsStoreProvider>
                             <ModalsProvider>
-                                {children}
+                                <InitAppProvider>
+                                    {children}
+                                </InitAppProvider>
                             </ModalsProvider>
                         </QueryParamsStoreProvider>
                     </PathStoreProvider>

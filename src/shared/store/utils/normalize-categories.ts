@@ -1,10 +1,11 @@
-import { ProductCategoryApiType, ProductCategoryType } from "@model/products";
+import { ProductCategoryApiType, ProductCategoryType } from "@model/category";
+
 
 const normalizeCategoriesItem = (from: ProductCategoryApiType): ProductCategoryType => ({
   id: from.id,
-  documentId: from.documentId,
-  title: from.title,
+  name:	from.name,
   image: from.image,
+  slug:	from.slug
 });
 
 const normalizeCategoriesList = (from: ProductCategoryApiType[]): ProductCategoryType[] => {

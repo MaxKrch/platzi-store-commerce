@@ -25,9 +25,11 @@
       "@components/*": ["src/shared/components/*"],
       "@constants/*": ["src/shared/constants/*"],
       "@hooks/*": ["src/shared/hooks/*"],
+      "@services/*": ["src/shared/services/*"],
       "@store/*": ["src/shared/store/*"],
       "@style/*": ["src/shared/style/*"],
-      "@model/*": ["src/shared/types/*"]
+      "@model/*": ["src/shared/types/*"],
+      "@utils/*": ["src/shared/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

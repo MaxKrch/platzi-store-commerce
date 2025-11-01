@@ -1,40 +1,30 @@
-import { ProductCategoryApiType } from "@model/products";
-import { isStrapiSuccessResponseProducts, StrapiResponseProducts } from "@model/strapi-api";
+import { ProductCategoryApiType } from "@model/category";
 import { IClient, RequestOptions } from "./types";
 import formateError from "./utils/formate-error";
-import { buildQueryString } from "./utils/build-query-string";
 
 export default class CategoriesApi {
-    private client: IClient;
-    private populate = ['image'];
+    private _client: IClient;
+    private _baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     constructor(client: IClient) {
-        this.client = client;
+        this._client = client;
     }
-
-    private _createGetCategoriesURL = (): string => {
-        const queryString = buildQueryString({
-            populate: this.populate,
-          }, 'categories');
-    
-          return `/product-categories?${queryString}`;
-        };
 
     getCategories = async ({ signal, next }: RequestOptions) => {
         try {
-            const response = await this.client.get<StrapiResponseProducts<ProductCategoryApiType[]>>(
+            const response = await this._client.get<ProductCategoryApiType[]>(
                 this._createGetCategoriesURL(),
                 { signal, next }
             );
-
-            if (!isStrapiSuccessResponseProducts(response)) {
-                throw new Error(response.error.message);
-            }
 
             return response;
 
         } catch (err) {
             throw formateError(err);
         }
+    };
+    
+    private _createGetCategoriesURL = (): string => {
+        return `${this._baseUrl}/categories`;
     };
 }

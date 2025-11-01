@@ -10,36 +10,33 @@ import Button from '@components/Button';
 import clsx from 'clsx';
 import Text from '@components/Text';
 import Image from 'next/image';
-import { META_STATUS } from '@constants/meta-status';
 import Loader from '@components/Loader';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ru';
 
 
 const UserModal: React.FC = () => {
-    const { modalStore, userStore } = useRootStore();
+    const { modalStore, authStore } = useRootStore();
     const [error, setError] = useState<string | null>(null);
     const errorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const handleLogout = useCallback(() => {
+    const handleLogout = useCallback(async () => {
         setError(null);
-        const result = userStore.logout();
+        const result = await authStore.logout();
         
         if(!result.success) {
             if(errorTimer.current) {
                 clearTimeout(errorTimer.current);
             }
-            setError(userStore.error);
+            setError(authStore.error);
             errorTimer.current = setTimeout(() => setError(null), 3 * 1000);
             return;
         }
 
         modalStore.close();
-    }, [modalStore, userStore]);
+    }, [modalStore, authStore]);
 
     const shouldShow = modalStore.isOpen 
         && modalStore.mode === MODES.PROFILE 
-        && userStore.isAuthorized; 
+        && authStore.isAuthorized; 
    
     if(!shouldShow) {
         return null;
@@ -64,7 +61,7 @@ const UserModal: React.FC = () => {
                             Логин: 
                         </Text>
                         <Text className={clsx(style['user-modal__section-value'])}>
-                            {userStore.user?.username}
+                            {authStore.user?.name}
                         </Text>
                     </div>
                     <div className={clsx(style['user-modal__section'])}>
@@ -72,24 +69,21 @@ const UserModal: React.FC = () => {
                             Email: 
                         </Text>
                         <Text className={clsx(style['user-modal__section-value'])}>
-                            {userStore.user?.email}
+                            {authStore.user?.email}
                         </Text>
                     </div>    
                     <div className={clsx(style['user-modal__section'])}>
                         <Text className={clsx(style['user-modal__section-title'])} weight='bold'>
                             Регистрация: 
                         </Text>
-                        <Text className={clsx(style['user-modal__section-value'])}>
-                            {dayjs(userStore.user?.createdAt).locale('ru').format('D MMMM YYYY')}
-                        </Text>  
                     </div>
                 </div>
                 <div className={clsx(style['user-modal__error'])}>
                     {error}
                 </div>                
                 <div className={clsx(style['user-modal__action'])}>
-                    <Button onClick={handleLogout} loading={userStore.status === META_STATUS.PENDING} className={clsx(style['user-modal__button'])}>
-                        {userStore.status === META_STATUS.PENDING && 
+                    <Button onClick={handleLogout} loading={authStore.isPending} className={clsx(style['user-modal__button'])}>
+                        {authStore.isPending && 
                             <Loader size='s' className={clsx(style['user-modal__action-icon'])}/>
                         }
                         Выйти

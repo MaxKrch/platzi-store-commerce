@@ -118,6 +118,7 @@ $base-line-height: 150%;
             "image main"
             "image footer";
         grid-template-rows: auto 1fr;
+        grid-template-columns: auto 1fr;
         gap: ($base-gap * 3);
     }
 

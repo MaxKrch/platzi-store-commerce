@@ -1,0 +1,69 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+$base-gap: $space-s;
+$base-size: $control-field-height;
+$icon-size: 24px;
+$description-width: 50px;
+$input-left-padding: calc($description-width);
+
+
+.price-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    gap: calc(2 * $base-gap);
+    @include base-adaptive-font-size();
+    @include laptop-up() {
+        flex-wrap: nowrap;
+    }
+
+    &-title {
+        font-size: 0.9em;
+        padding-left: $base-gap;
+    }
+    
+    &-section {
+        display: flex;
+        height: $base-size;
+        gap: $base-gap;
+        position: relative;
+
+
+        &__description {
+            position: absolute;
+            height: 100%;
+            width: $description-width;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            padding: 0.1em;
+            color: $brand;
+            font-size: 0.7em;
+        }
+
+        &__input {
+            height: 100%;
+            padding: 0 $input-left-padding;
+            font-size: 0.9em;
+            width: 200px;
+        } 
+
+        &__clear {
+            position: absolute;
+            width: $base-size;
+            height: $base-size;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            right: 0;
+
+            &-icon {
+                height: $icon-size;
+                width: $icon-size;
+                color: $brand;
+            }
+        }
+    }
+}

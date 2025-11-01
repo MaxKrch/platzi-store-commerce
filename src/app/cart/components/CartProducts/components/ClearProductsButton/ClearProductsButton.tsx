@@ -1,4 +1,4 @@
-import { ProductType } from '@model/products';
+import { ProductType } from '@model/product';
 import { useRootStore } from '@providers/RootStoreContext';
 import Button from '@components/Button';
 import { observer } from 'mobx-react-lite';

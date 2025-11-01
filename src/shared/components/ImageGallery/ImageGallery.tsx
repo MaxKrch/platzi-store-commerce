@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
 import style from './ImageGallery.module.scss';
-import { ProductType } from '@model/products';
+import { ProductType } from '@model/product';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 import CrossIcon from '@components/icons/CrossIcon';
@@ -105,14 +105,14 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, previewSizes }) => 
         {
           images.map((img, currentIndex) => (
             <Image
-              key={img.id}
+              key={img}
               className={clsx(
                 style['gallery__image'], 
                 style[`gallery__image_${mode}`], 
                 currentIndex === index && style['gallery__image_active']
               )}
-              src={img.url}
-              alt={img.alternativeText ?? 'Card Image'}
+              src={img}
+              alt={img ?? 'Card Image'}
               fill
               sizes={(mode === 'preview' && previewSizes) ? previewSizes : '100vh'}
               priority

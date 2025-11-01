@@ -2,7 +2,6 @@
 
 import Pagination from '@components/Pagination';
 import normalizeCurrentPage from '@components/Pagination/utils/normalize-current-page';
-import { useProductsStore } from '@providers/ProductsStoreProvider';
 import { useRootStore } from '@providers/RootStoreContext';
 import { observer } from 'mobx-react-lite';
 import type React from 'react';
@@ -10,8 +9,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 const ProductPagination: React.FC = () => {
   const { queryParamsStore } = useRootStore();
-  const productsStore = useProductsStore();
-  const { pageCount, total } = productsStore.pagination || {};
+  const pageCount = 10;
   const page = queryParamsStore.page ?? 1;
 
   const currentPage = useMemo(
@@ -33,10 +31,6 @@ const ProductPagination: React.FC = () => {
     },
     [currentPage, queryParamsStore]
   );
-
-  if (!pageCount || total === 0) {
-    return null;
-  }
 
   return <Pagination currentPage={currentPage} onClick={handleClick} pageCount={pageCount} />;
 };

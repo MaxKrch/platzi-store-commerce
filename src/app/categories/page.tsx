@@ -3,7 +3,6 @@ import SectionHeader from "@components/SectionHeader";
 import { Metadata } from "next";
 import { CategoriesInitData } from "@store/global/CategoriesStore/CategoriesStore";
 import CategoriesApi from "@api/CategoriesApi";
-import { isStrapiSuccessResponseProducts } from "@model/strapi-api";
 import CategoriesList from "./components/CategoriesList";
 
 export const sectionText = {
@@ -26,15 +25,11 @@ export default async function CategoriesPage () {
   
     try {
         const response = await categoriesApi.getCategories({ next: { revalidate: 60 * 60 }});
-        
-        if(!isStrapiSuccessResponseProducts(response)) {
-            throw response;
-        }
+
 
         initData = {
             success: true,
-            categories: response.data,
-            meta: response.meta,            
+            categories: response,  
         };
 
     } catch(err) {

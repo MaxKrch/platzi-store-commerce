@@ -1,53 +1,42 @@
 import qs from 'qs';
 import { QueryParams } from '@model/query-params';
-import { DEFAULT_SORT, SORT_VARIABLES } from '@constants/product-sort';
 
 type buildQueryStringArgs = QueryParams & {
-  populate?: string[] | string | object;
+  limit?: number;
+  offset?: number
 };
 
-export function buildQueryString(params: buildQueryStringArgs, type: 'products' | 'categories' = 'products') {
-  const { page = 1, count = 9, query, categories, populate, inStock, sort } = params;
+export function buildQueryString(params: buildQueryStringArgs) {
+  const { category, query, offset, page = 1, minPrice = 1, maxPrice = 1000000, limit = 30  } = params;
+  const preparedPage = (page && page > 0) 
+    ? page 
+    : 1;
+  const normalizedOffset = (offset && offset >= 0) 
+    ? offset 
+    : (preparedPage * limit);
 
-  const strapiQuery: Record<string, unknown> = {
-    pagination: {
-      page,
-      pageSize: count,
-    },
+  const platziQuery: Record<string, unknown> = {
+    limit,
+    offset: normalizedOffset,
   };
 
-  if (populate) {
-    strapiQuery.populate = populate;
+  if(category) {
+    platziQuery.categoryId = category;
   }
 
-  if(type === 'products') {
-    if (query) {
-      strapiQuery.filters = {
-        ...(strapiQuery.filters || {}),
-        title: { $containsi: query },
-      };
-    }
-
-    if (Array.isArray(categories)) {
-      strapiQuery.filters = {
-        ...(strapiQuery.filters || {}),
-        productCategory: {
-          id: { $in: categories },
-        },
-      };
-    }
-
-    if (inStock) {
-      strapiQuery.filters = {
-        ...(strapiQuery.filters || {}),
-        isInStock: { $eq: true },
-      };
-    }
-
-    const currentSort = sort ? sort : DEFAULT_SORT;
-    const currentSortApi = SORT_VARIABLES[currentSort].api;
-    strapiQuery.sort = `${currentSortApi.field}:${currentSortApi.order}`;
+  if(query) {
+    platziQuery.title = query;
   }
+
   
-  return qs.stringify(strapiQuery);
+  if(minPrice !== undefined) {
+    platziQuery.price_min = minPrice;
+  }
+
+  
+  if(maxPrice != undefined) {
+    platziQuery.price_max = maxPrice;
+  }
+
+  return qs.stringify(platziQuery);
 }

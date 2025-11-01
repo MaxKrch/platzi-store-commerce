@@ -12,7 +12,6 @@ $dropdown-option-selected-color: $text-accent;
   &-container {
     border-radius: $border-radius-secondary;
     position: relative;
-    z-index: 3;
   }
  
   background: $dropdown-options-bg;
@@ -22,6 +21,7 @@ $dropdown-option-selected-color: $text-accent;
   left: 0;
   width: 100%;
   top: $control-field-height;
+  z-index: 3;
 
   &__option {
     display: flex;

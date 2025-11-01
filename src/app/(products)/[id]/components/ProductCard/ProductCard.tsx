@@ -22,7 +22,7 @@ const ProductCard: React.FC = () => {
 
   const refetch = useCallback(() => {
     if(typeof productId === 'string') {
-      productDetailsStore.fetchProduct(productId);
+      productDetailsStore.fetchProduct(Number(productId));
     }
   }, [productDetailsStore, productId]);
   
@@ -39,7 +39,7 @@ const ProductCard: React.FC = () => {
 
     prevProduct.current = productId;
 
-    productDetailsStore.fetchProduct(productId);
+    productDetailsStore.fetchProduct(Number(productId));
   }, [productId, productDetailsStore]);
 
   if(productDetailsStore.error === 'NotFound' || productDetailsStore.error === 'Not Found') {
@@ -47,7 +47,7 @@ const ProductCard: React.FC = () => {
   }
 
   const isFailedRequest = productDetailsStore.status === META_STATUS.ERROR 
-    || (productDetailsStore.status === META_STATUS.SUCCESS && productDetailsStore.product?.documentId !== productId);
+    || (productDetailsStore.status === META_STATUS.SUCCESS && productDetailsStore.product?.id !== Number(productId));
 
   const isSuccessRequest = productDetailsStore.status === META_STATUS.SUCCESS 
     && !!productDetailsStore.product;

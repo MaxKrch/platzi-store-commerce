@@ -1,5 +1,5 @@
 import { META_STATUS, MetaStatus } from '@constants/meta-status';
-import { ProductApiType, ProductType } from '@model/products';
+import { ProductApiType, ProductType } from '@model/product';
 import { ILocalStore } from '@store/hooks/useLocalStore';
 import RootStore from '@store/RootStore/RootStore';
 import { normalizeProductItem } from '@store/utils/normalize-products';
@@ -107,7 +107,7 @@ export default class ProductDetailsStore implements ILocalStore {
     this._status = META_STATUS.IDLE;
   }
 
-  async fetchProduct(productId: ProductType['documentId'], requestId?: string): Promise<void> {
+  async fetchProduct(id: ProductType['id'], requestId?: string): Promise<void> {
     if (this._abortCtrl) {
       this._abortCtrl.abort();
     }
@@ -122,11 +122,11 @@ export default class ProductDetailsStore implements ILocalStore {
 
     try {
       const response = await this._rootStore.api.products.getProductDetails(
-        productId, { signal: this._abortCtrl.signal }
+       id, { signal: this._abortCtrl.signal }
       );
 
       runInAction(() => {
-        this._product = normalizeProductItem(response.data);
+        this._product = normalizeProductItem(response);
         this._abortCtrl = null;
         this._status = META_STATUS.SUCCESS;
       });

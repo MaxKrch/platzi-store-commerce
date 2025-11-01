@@ -1,8 +1,7 @@
 import { META_STATUS, MetaStatus } from "@constants/meta-status";
 import { Collection } from "@model/collections";
-import { ProductApiType, ProductType } from "@model/products";
+import { ProductApiType, ProductType } from "@model/product";
 import { QueryParams } from "@model/query-params";
-import { MetaResponse } from "@model/strapi-api";
 import { ILocalStore } from "@store/hooks/useLocalStore";
 import RootStore from "@store/RootStore/RootStore";
 import getInitialCollection from "@store/utils/get-initial-collection";
@@ -14,7 +13,6 @@ import { action, computed, IReactionDisposer, makeObservable, observable, runInA
 type PrivateFields = 
     | '_products' 
     | '_status' 
-    | '_meta' 
     | '_error'
     | '_requestId' 
     | '_setProducts';
@@ -23,7 +21,6 @@ export type ProductsInitData = {
     success: true,
     products: ProductApiType[],
     query: string,
-    meta: MetaResponse<ProductApiType[]>
 } | {
     success: false,
     query: string,
@@ -37,7 +34,6 @@ export type ProductsStoreArgs = {
 
 export default class ProductsStore implements ILocalStore {
   private _products: Collection<ProductType['id'], ProductType> = getInitialCollection();
-  private _meta: MetaResponse<ProductType[]> | null = null;
   private _status: MetaStatus = META_STATUS.IDLE;
   private _requestId: string | undefined = undefined;
   private _abortCtrl: AbortController | null = null;
@@ -50,13 +46,11 @@ export default class ProductsStore implements ILocalStore {
     makeObservable<ProductsStore, PrivateFields>(this, {
       _products: observable,
       _status: observable,
-      _meta: observable,
       _requestId: observable,
       _error: observable,
 
       products: computed,
       status: computed,
-      pagination: computed,
       requestId: computed,
       countProducts: computed,
       error: computed,
@@ -93,12 +87,8 @@ export default class ProductsStore implements ILocalStore {
     return this._requestId;
   }
 
-  get pagination(): MetaResponse<ProductType[]>['pagination'] | undefined {
-    return this._meta?.pagination;
-  }
-
   get countProducts(): number {
-    return this._products.order.length;
+    return this._products.order.size;
   }
 
   private _setProducts(products: ProductApiType[] | null) {
@@ -127,21 +117,15 @@ export default class ProductsStore implements ILocalStore {
     }
 
     this._setProducts(init.products);
-    this._meta = init.meta;
     this._status = META_STATUS.SUCCESS;
   };
 
   getProductById(id: ProductType['id']): ProductType | undefined {
-    return this._products.entities[id];
-  }
-
-  findProductByDocumentId(documentId: ProductType['documentId']): ProductType | undefined {
-    return this.products.find(item => item.documentId === documentId);
+    return this._products.entities.get(id);
   }
 
   resetProductList(): void {
     this._products = getInitialCollection();
-    this._meta = null;
     this._requestId = undefined;
     this._status = META_STATUS.IDLE;
   }
@@ -155,7 +139,6 @@ export default class ProductsStore implements ILocalStore {
     runInAction(() => {
       this._status = META_STATUS.PENDING;
       this._requestId = requestId;
-      this._meta = null;
       this._error = null;
       this._setProducts(null);
     });
@@ -166,8 +149,7 @@ export default class ProductsStore implements ILocalStore {
       );
 
       runInAction(() => {
-        this._meta = response.meta;
-        this._setProducts(response.data);
+        this._setProducts(response);
         this._abortCtrl = null;
         this._status = META_STATUS.SUCCESS;
       });
@@ -178,7 +160,6 @@ export default class ProductsStore implements ILocalStore {
       }
 
       runInAction(() => {
-        this._meta = null;
         this._requestId = undefined;
         this._error = err instanceof Error ? err.message : "UnknownError"; 
         this._setProducts(null);

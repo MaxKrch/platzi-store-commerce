@@ -1,7 +1,6 @@
 import { META_STATUS } from '@constants/meta-status';
 import { DEFAULT_SORT, SORT_VARIABLES, SortKeys } from '@constants/product-sort';
 import { Option } from '@model/option-dropdown';
-import { ProductCategoryType } from '@model/products';
 import { QueryParams } from '@model/query-params';
 import { ILocalStore } from '@store/hooks/useLocalStore';
 import RootStore from '@store/RootStore/RootStore';
@@ -15,13 +14,17 @@ import {
   type IReactionDisposer,
 } from 'mobx';
 
+export const defaultValue: Option = {
+  key: 'any',
+  value: 'Любая категория',
+};
+
 function isSortKey(key: string): key is SortKeys {
   return Object.keys(SORT_VARIABLES).includes(key);
 }
 
 type PrivateFields =
   | '_inputValue'
-  | '_cleanupSelectedCategories'
   | '_initFromQueryParamsStore'
   | '_resetQuery'
 
@@ -29,11 +32,10 @@ export default class SearchStore implements ILocalStore {
   private _rootStore: RootStore;
   private _inputValue: string = '';
   private _debounce: ReturnType<typeof setTimeout> | null = null;
-  private _handleChange: (params: QueryParams) => void;
+
   reactions: IReactionDisposer[] = [];
 
   constructor({
-    handleChange,
     rootStore,
   }: {
     handleChange: (params: QueryParams) => void;
@@ -43,48 +45,31 @@ export default class SearchStore implements ILocalStore {
       _inputValue: observable,
 
       changeInput: action.bound,
-      setCategories: action.bound,
+      setCategory: action.bound,
       setActiveSort: action.bound,
-      setInStock: action.bound,
+      setMinPrice: action.bound,
+      setMaxPrice: action.bound,
 
       _resetQuery: action,
       _initFromQueryParamsStore: action,
-      _cleanupSelectedCategories: action,
 
       inputValue: computed,
-      inStock: computed,
 
       sortOptions: computed,
       selectedSortOption:computed,
       titleSortValue: computed, 
 
-      categoriesOptions: computed,
-      selectedCategoriesOptions: computed,
-      titleCategoriesValue: computed,
+      categoryOptions: computed,
+      selectedCategoryOption: computed,
+      titleCategoryValue: computed,
     });
 
-    this._handleChange = handleChange;
     this._rootStore = rootStore;
     this.initReactions();
     this._initFromQueryParamsStore();
   }
 
   initReactions(): void {
-    const reactionLoadCategories = reaction(
-      () => this._rootStore.categoriesStore.list,
-      (categories) => {
-        if (
-          this._rootStore.categoriesStore.status !== META_STATUS.SUCCESS ||
-          categories.length === 0
-        ) {
-          return;
-        }
-
-        this._cleanupSelectedCategories(categories);
-      }
-    );
-    this.reactions.push(reactionLoadCategories);
-    
     const reactionChangeInput = reaction(
       () => this._rootStore.queryParamsStore.query,
       (query) => {
@@ -115,37 +100,59 @@ export default class SearchStore implements ILocalStore {
     return SORT_VARIABLES[this._rootStore.queryParamsStore.sort ?? DEFAULT_SORT].label;
   }
 
-  get categoriesOptions(): Option[] {
-    return this._rootStore.categoriesStore._list.order.map(id => ({
-      key: `${id}`,
-      value: this._rootStore.categoriesStore._list.entities[id]?.title,
+  get categoryOptions(): Option[] {
+    const loadedCategoriesOptions = this._rootStore.categoriesStore.list.map(item => ({
+      key: `${item.id}`,
+      value: item.name,
     }));
+
+    return [defaultValue, ...loadedCategoriesOptions];
   }
 
-  get selectedCategoriesOptions(): Option[] {   
-    const categories = this._rootStore.queryParamsStore.categories ?? [];
-    return categories.map(id => ({
-      key: `${id}`,
-      value: this._rootStore.categoriesStore._list.entities[id]?.title,
-    }));
-  }
-
-  get titleCategoriesValue(): string {
-    const categories = this._rootStore.queryParamsStore.categories ?? [];
-    if (categories.length > 0) {
-      return this.selectedCategoriesOptions.map((item) => item.value).join(', ');
+  get selectedCategoryOption(): Option {   
+    const categoryId = this._rootStore.queryParamsStore.category;
+    if(categoryId === null || categoryId === undefined) {
+      return defaultValue;
     }
 
-    return 'Любая категория';
+    const category = this._rootStore.categoriesStore._list.entities.get(categoryId);
+
+    if(!category) {
+      return defaultValue;
+    }
+
+    return ({
+      key: categoryId.toString(),
+      value: category.name,
+    });
+  }
+
+  get titleCategoryValue(): string {
+    const categoryId = this._rootStore.queryParamsStore.category;
+    if(categoryId === null || categoryId === undefined) {
+      return defaultValue.value;
+    }
+    
+    const category = this._rootStore.categoriesStore._list.entities.get(categoryId);
+
+    if(!category) {
+      return defaultValue.value;
+    }
+    
+    return category.name;
   }
 
   get inputValue(): string {
     return this._inputValue;
   }
 
-  get inStock(): boolean {
-    return this._rootStore.queryParamsStore.inStock ?? false;
+  get minPrice(): QueryParams['minPrice'] {
+    return this._rootStore.queryParamsStore.minPrice;
   }
+
+  get maxPrice(): QueryParams['maxPrice'] {
+    return this._rootStore.queryParamsStore.maxPrice;
+  } 
 
   _resetQuery(): void {
     if (this._debounce) {
@@ -155,7 +162,9 @@ export default class SearchStore implements ILocalStore {
 
     this._rootStore.queryParamsStore.mergeQueryParams({
       query: '',
-      categories: []
+      category: null,
+      minPrice: null,
+      maxPrice: null
     });
   }
 
@@ -172,30 +181,27 @@ export default class SearchStore implements ILocalStore {
     );
   }
 
-  setCategories(options: Option[]): void {    
+  setCategory(option: Option): void {    
     if (this._rootStore.categoriesStore.status !== META_STATUS.SUCCESS) {
       return;
     }
-    
-    const selected: ProductCategoryType['id'][] = [];
-    
-    options.forEach((item) => {
-      const categoriesId = Number(item.key);
-    
-      if (this._rootStore.categoriesStore._list.order.includes(categoriesId)) {
-        selected.push(categoriesId);
-      };
-    });
+
     
     this._rootStore.queryParamsStore.mergeQueryParams({
-      categories: selected,
+      category: option.key === defaultValue.key ? null : Number(option.key),
     });
   }
 
-  setInStock(value: boolean): void {
+  setMinPrice(value: number | null): void {
     this._rootStore.queryParamsStore.mergeQueryParams({
-      inStock: value,
+      minPrice: value,
     });
+  }
+
+  setMaxPrice(value: number | null): void {
+    this._rootStore.queryParamsStore.mergeQueryParams({
+      maxPrice: value,
+    });    
   }
 
   setActiveSort(option: Option ): void {
@@ -212,19 +218,6 @@ export default class SearchStore implements ILocalStore {
  
   private _initFromQueryParamsStore(): void {
     this._inputValue = this._rootStore.queryParamsStore.query ?? '';   
-  }
-
-  private _cleanupSelectedCategories(categories: ProductCategoryType[]): void {
-    const selectedCategories = this._rootStore.queryParamsStore.categories ?? [];
-    const cleanCategories = categories
-      .filter((item) => selectedCategories.includes(item.id))
-      .map(item => item.id);
-
-    if(selectedCategories.length !== cleanCategories.length) {
-      this._rootStore.queryParamsStore.mergeQueryParams({
-        categories: cleanCategories
-      });
-    } 
   }
 
   clearReactions(): void {

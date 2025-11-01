@@ -5,35 +5,35 @@ import { ReadonlyURLSearchParams } from "next/navigation";
 import qs from "qs";
 
 type PrivateFields = 
-    | '_categories'
+    | '_category'
     | '_query'
-    | '_inStock'
     | '_sort'
-    | '_count'
+    | '_minPrice'
+    | '_maxPrice'
     | '_page'
 
 export default class QueryParamsStore {
-    private _page: QueryParams['page'] = undefined;
-    private _count: QueryParams['count'] = undefined;
-    private _categories: QueryParams['categories'] = undefined;
+    private _category: QueryParams['category'] = undefined;
     private _query: QueryParams['query'] = undefined;
     private _sort: QueryParams['sort'] = undefined;
-    private _inStock: QueryParams['inStock'] = undefined;
+    private _minPrice: QueryParams['minPrice'] = undefined;
+    private _maxPrice: QueryParams['maxPrice'] = undefined;
+    private _page: QueryParams['page'] = undefined;
 
     constructor(params: URLSearchParams | ReadonlyURLSearchParams) {
         makeObservable<QueryParamsStore, PrivateFields>(this, {
-            _categories: observable,
+            _category: observable,
             _query: observable,
-            _inStock: observable,
             _sort: observable,
-            _count: observable,
+            _minPrice: observable,
+            _maxPrice: observable,
             _page: observable,
 
-            categories: computed,
+            category: computed,
             query: computed,
-            inStock: computed,
             sort: computed,
-            count: computed,
+            minPrice: computed,
+            maxPrice: computed,
             page: computed,
             
             queryObject: computed,
@@ -45,8 +45,8 @@ export default class QueryParamsStore {
         this.setFromSearchParams(params);
     }
 
-    get categories(): QueryParams['categories'] {
-        return this._categories;
+    get category(): QueryParams['category'] {
+        return this._category;
     }
 
     get query(): QueryParams['query'] {
@@ -57,13 +57,13 @@ export default class QueryParamsStore {
         return this._sort;
     }
 
-    get inStock(): QueryParams['inStock'] {
-        return this._inStock;
-    }
-
-    get count(): QueryParams['count'] {
-        return this._count;
+    get minPrice(): QueryParams['minPrice'] {
+        return this._minPrice;
     }   
+
+    get maxPrice(): QueryParams['maxPrice'] {
+        return this._maxPrice;
+    }
 
     get page(): QueryParams['page'] {
         return this._page;
@@ -72,27 +72,27 @@ export default class QueryParamsStore {
     get queryObject(): QueryParams {
         const queryParams: QueryParams = {};
 
-        if(this._categories) {
-            queryParams.categories = this._categories;
+        if(this._category !== undefined && this._category !== null) {
+            queryParams.category = this._category;
         }
 
         if(this._query) {
             queryParams.query = this._query;
         }
 
-        if(this._inStock) {
-            queryParams.inStock = this._inStock;
-        }
-
         if(this._sort) {
             queryParams.sort = this._sort;
         }
 
-        if(this._count) {
-            queryParams.count = this._count;
+        if(this._minPrice !== undefined && this._minPrice !== null) {
+            queryParams.minPrice = this._minPrice;
         }
 
-        if(this._page) {
+        if(this._maxPrice !== undefined && this._maxPrice !== null) {
+            queryParams.maxPrice = this._maxPrice;
+        }
+
+        if(this._page !== undefined && this._page !== null) {
             queryParams.page = this._page;
         }
 
@@ -102,12 +102,12 @@ export default class QueryParamsStore {
     get queryString(): string {
         const paramsObj = this.queryObject;
 
-        if(paramsObj.page && paramsObj.page === 1) {
-            delete paramsObj.page;
-        }
-
         if(paramsObj.sort && paramsObj.sort === DEFAULT_SORT) {
             delete paramsObj.sort;
+        }
+
+        if(paramsObj.page && paramsObj.page === 1) {
+            delete paramsObj.page;
         }
         
         return qs.stringify(paramsObj, { arrayFormat: "repeat" });
@@ -121,21 +121,7 @@ export default class QueryParamsStore {
         const params: QueryParams = qs.parse(queryString, { ignoreQueryPrefix: true });
         
         runInAction(() => {
-            if(params.categories) {
-                if(Array.isArray(params.categories)) {
-                    this._categories = params.categories.length > 0
-                        ? params.categories.map(Number)
-                        : undefined;
-
-                } else {
-                    const categoryNumber = Number(params.categories);
-                    this._categories = !Number.isNaN(categoryNumber)
-                        ? [categoryNumber]
-                        : undefined;   
-                }
-            } else {
-                this._categories = undefined;
-            }
+            this._category = params.category;
 
             if(params.query !== undefined && params.query !== null) {
                 this._query = params.query.length > 0
@@ -144,29 +130,18 @@ export default class QueryParamsStore {
             } else {
                 this._query = undefined;
             }
-
             
-            this._sort = params.sort  ?? undefined;
-            this._inStock = params.inStock ?? undefined;
-            this._count = params.count ?? undefined;
-            this._page = params.page ?? undefined;            
+            this._sort = params.sort ?? undefined;
+            this._minPrice = params.minPrice;
+            this._maxPrice = params.maxPrice;
+            this._page = params.page;          
         });
     }
 
     mergeQueryParams(params: QueryParams): void {
         runInAction(() => {
-            if(params.categories) {
-                if(Array.isArray(params.categories)) {
-                    this._categories = params.categories.length > 0
-                        ? params.categories.map(Number)
-                        : undefined;
-
-                } else {
-                    const categoryNumber = Number(params.categories);
-                    this._categories = !Number.isNaN(categoryNumber)
-                        ? [categoryNumber]
-                        : undefined;   
-                }
+            if(params.category !== undefined) {
+                this._category = params.category;
             }
 
             if(params.query !== undefined && params.query !== null) {
@@ -179,15 +154,15 @@ export default class QueryParamsStore {
                 this._sort = params.sort;
             }
 
-            if(params.inStock !== undefined) {
-                this._inStock = params.inStock ?? undefined;
-            }
-
-            if(params.count) {
-                this._count = params.count;
+            if(params.minPrice !== undefined) {
+                this._minPrice = params.minPrice;
             }
             
-            if (params.page) {
+            if (params.maxPrice !== undefined) {
+                this._maxPrice = params.maxPrice;
+            }
+
+            if (params.page !== undefined) {
                 this._page = params.page;
             }
         });

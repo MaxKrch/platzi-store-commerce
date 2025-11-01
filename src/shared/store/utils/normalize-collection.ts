@@ -5,14 +5,14 @@ export const normalizeCollection = <K extends number | string, T>(
   getKeyForCollection: (element: T) => K
 ): Collection<K, T> => {
   const collection: Collection<K, T> = {
-    order: [],
-    entities: {} as Record<K, T>,
+    order: new Set(),
+    entities: new Map()
   };
 
   elements.forEach((item) => {
     const id = getKeyForCollection(item);
-    collection.order.push(id);
-    collection.entities[id] = item;
+    collection.order.add(id);
+    collection.entities.set(id, item);
   });
 
   return collection;
