@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useEffect } from "react";
-import { schema, Schema } from "../../AuthModal.schema";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import style from './AuthForm.module.scss';
@@ -13,9 +12,10 @@ import Loader from "@components/Loader";
 import UserIcon from "@components/icons/UserIcon";
 import MailIcon from "@components/icons/MailIcon";
 import KeyIcon from "@components/icons/KeyIcon";
+import { authSchema, AuthSchema } from "@schemas/auth.schema";
 
 export type AuthFormProps = {
-    onSubmit: (data: Schema) => void,
+    onSubmit: (data: AuthSchema) => void,
     mode: AuthModes, 
     needReset: boolean,
     error?: string | null,
@@ -37,12 +37,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
         reset,
         resetField,
         clearErrors
-    } = useForm<Schema>({
-        resolver: zodResolver(schema),
+    } = useForm<AuthSchema>({
+        resolver: zodResolver(authSchema),
         mode: 'onChange'
     });
 
-    const handleFocus = useCallback((field: keyof Schema) => {
+    const handleFocus = useCallback((field: keyof AuthSchema) => {
         clearErrors(field);
     }, [clearErrors]);
 

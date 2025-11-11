@@ -138,7 +138,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
         Цена:
       </div>
 
-      <div className={clsx(style['price-filter-section'])}>
+      <div className={clsx(style['price-filter-section'], style['price-filter-min'])}>
         <label className={clsx(style['price-filter-section__label'])}>
           <div className={clsx(style['price-filter-section__description'])}>
             От $
@@ -159,7 +159,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({
         </div>
       </div>
 
-      <div className={clsx(style['price-filter-section'])}>
+      <div className={clsx(style['price-filter-section'], style['price-filter-max'])}>
         <label className={clsx(style['price-filter-section__label'])}>
           <div className={clsx(style['price-filter-section__description'])}>
             До $

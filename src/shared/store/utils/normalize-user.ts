@@ -5,6 +5,7 @@ const normalizeUser = (from: UserApi): User => {
         id: from.id,
         email: from.email,
         name: from.name,
+        password: from.password,
         role: from.role,
         avatar: from.avatar
     });

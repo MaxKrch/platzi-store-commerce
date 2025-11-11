@@ -1,0 +1,73 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.my {
+    @include content-container();
+    @include base-adaptive-font-size();
+
+    display: grid;
+    padding: $space-xxl;
+    grid-template-areas: 
+        "image"
+        "info"
+        "action";
+    gap: $space-xxxl;
+    min-width: 320px;
+    max-width: 600px;
+    width: 100%;
+
+    @include laptop-up() {
+        grid-template-areas:  
+            "image info"
+            "image action";
+        max-width: 100%;
+        justify-content: space-around;
+        grid-template-columns: auto 1fr;
+    }
+
+    &-image {
+        object-fit: contain;
+        object-position: center;
+           
+        &__wrapper {
+            max-width: 320px;
+            min-width: 280px;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            grid-area: image;
+        }
+    }
+
+    &-info {
+        grid-area: info;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: $space-xxxl;
+    }
+
+
+    &-action {
+        grid-area: action;    
+        
+        &__button {
+            width: 100%;
+        }
+
+        &__error {
+            grid-area: error;
+            height: 1.2em;
+            font-size: 0.9em;
+            color: red;
+            font-weight: bold;
+            padding: $space-l;
+        }
+    }
+}
+
+
+                    

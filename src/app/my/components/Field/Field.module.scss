@@ -1,0 +1,90 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.field {
+    display: grid;
+    column-gap: $space-l;
+    row-gap:  $space-xxs;
+    grid-template-areas:
+        "title"
+        "value"
+        "status"
+        "buttons";
+
+    @include tablet-up() {
+        grid-template-areas:
+            "title value"
+            ". status"
+            ". buttons";
+        grid-template-columns: 1fr 1.5fr;
+    }
+
+  
+    @include laptop-up() {
+        grid-template-areas: 
+            "title value buttons"
+            ". status status";
+                    grid-template-columns: 1fr 1.5fr 2fr;
+    }
+
+    &__title {
+        grid-area: title;
+    }
+    
+    &__value {
+        grid-area: value;
+    } 
+
+    &__buttons {
+        display: flex;
+        justify-content: space-between;
+        grid-area: buttons;
+        gap: $space-l;
+        opacity: 0.3;
+        transition: opacity 0.2s ease;
+
+        @include laptop-up() {
+            justify-content: start;
+        }
+    
+        &:hover {
+            opacity: 1;
+        }
+
+        &:focus-within {
+            opacity: 1;
+        }
+    }
+    
+    &:focus-within .field__buttons {
+        opacity: 1;
+    }
+
+    &__button {
+        min-width: 125px;
+        flex-grow: 1;
+    }
+    &__icon {
+        color: white;
+        &-wrapper {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__status {
+        grid-area: status;
+        min-height: 1.2em;
+        font-size: 0.75em;
+        line-height: 1em;
+        padding: 0 $space-xs;
+    }
+
+    &__await {
+        color: $brand;
+    }
+
+    &__error {
+        color: red;
+    }
+}

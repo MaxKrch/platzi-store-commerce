@@ -49,4 +49,10 @@ export default class AxiosClient implements ITransport {
     void _next;
     return this.instance.post(url, data, clearedOptions);
   };
+
+  put = async <T = unknown>(url: string, data?: unknown, options?: RequestOptions): Promise<T> => {
+    const { next: _next, ...clearedOptions } = options ?? {};
+    void _next;
+    return this.instance.put(url, data, clearedOptions);
+  };
 };

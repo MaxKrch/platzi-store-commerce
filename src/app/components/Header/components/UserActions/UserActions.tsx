@@ -10,16 +10,18 @@ import UserIcon from '@components/icons/UserIcon';
 import { useRootStore } from '@providers/RootStoreContext';
 import Text from '@components/Text';
 import { observer } from 'mobx-react-lite';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { MODES } from '@constants/modal';
 import OnlyClient from '@components/OnlyClient';
 
 const UserActions = () => {
   const path = usePathname();
+  const router = useRouter();
   const { 
     cartStore,
     authStore,
-    modalStore 
+    modalStore,
+    pathStore
   } = useRootStore();
 
   const CartComponent: React.FC<PropsWithChildren> = path === appRoutes.cart.mask
@@ -27,9 +29,14 @@ const UserActions = () => {
     : ({ children }) => <Link href={appRoutes.cart.create()}>{children}</Link>;
 
   const handleUserIconClick = useCallback(() => {
-     const mode = authStore.isAuthorized ? MODES.PROFILE : MODES.AUTH;
-    modalStore.open(mode);
-  }, [authStore.isAuthorized, modalStore]);  
+    if(authStore.isAuthorized && path !== appRoutes.my.create()) {
+      pathStore.updateURL(router, appRoutes.my.create());
+    }
+
+    if(!authStore.isAuthorized) {
+      modalStore.open(MODES.AUTH);
+    }
+  }, [pathStore, modalStore, authStore.isAuthorized, path, router]);  
 
   return (
     <div className={clsx(style['actions'])}>

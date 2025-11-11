@@ -30,9 +30,8 @@ export default class PathStore {
         return `/${this._segments.join('/')}`;
     }
 
-    updateURL = (router: RouterType, path: string[]): void => {
-        const newPath = `/${path.join('/')}`;
-        router.push(newPath);
+    updateURL = (router: RouterType, path: string): void => {
+        router.push(path);
     };
 
     synchWithPath(path: string): void {

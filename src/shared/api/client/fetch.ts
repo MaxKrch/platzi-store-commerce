@@ -37,13 +37,13 @@ export default class FetchClient implements ITransport {
         }
     };
 
-    post = async <T = unknown, P  extends object = object>(url: string, body: P, options: RequestOptions): Promise<T> => {
+    post = async <T = unknown, P  extends object = object>(url: string, data: P, options: RequestOptions): Promise<T> => {
         try {
             const { headers, signal, next } = options;
             const response = await fetch(url, {
                 headers: {...this.headers, ...headers},
                 method: 'POST',
-                body: JSON.stringify(body),
+                body: JSON.stringify(data),
                 signal,
                 next,
             });
@@ -52,5 +52,22 @@ export default class FetchClient implements ITransport {
         } catch(err) {
             return this.handleFetchError(err);
         }
+    };
+
+    put = async <T = unknown, P extends object = object>(url: string, data: P, options: RequestOptions): Promise<T> => {
+      try {
+            const { headers, signal, next } = options;
+            const response = await fetch(url, {
+                headers: {...this.headers, ...headers},
+                method: 'PUT',
+                body: JSON.stringify(data),
+                signal,
+                next,
+            });
+
+            return await handleResponse(response);            
+      } catch(err) {
+        return this.handleFetchError(err);
+      }  
     };
 } 

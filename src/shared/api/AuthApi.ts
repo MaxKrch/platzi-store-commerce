@@ -1,7 +1,7 @@
 import { AuthData, AuthResponse, CheckAvailableEmailData, CheckAvailableEmailResponse, LogoutResponse, RefreshTokensData, RegisterUserData, RegisterUserResponse } from "@model/platzi-api";
 import { IClient } from "./types";
 import formateError from "./utils/formate-error";
-import { UserApi } from "@model/user";
+import { User, UserApi } from "@model/user";
 
 export default class AuthApi {
     _client: IClient; 
@@ -12,11 +12,11 @@ export default class AuthApi {
         this._client = client; 
     }
 
-    checkEmail = async (email: CheckAvailableEmailData, signal?: AbortSignal): Promise<CheckAvailableEmailResponse> => {
+    checkEmail = async (data: CheckAvailableEmailData, signal?: AbortSignal): Promise<CheckAvailableEmailResponse> => {
         try {
             const response = await this._client.post<CheckAvailableEmailResponse>(
                 this._createCheckEmailURL(), 
-                { email }, 
+                data, 
                 { signal }
             );
 
@@ -68,10 +68,24 @@ export default class AuthApi {
 
     getProfile = async (signal?: AbortSignal) => {
         try {
-
             const response = await this._client.get<UserApi>(
                 this._createGetProfileURL(),
                 { signal, requiredAuth: true }
+            );
+            return response;
+        } catch(err) {
+            throw formateError(err);
+        }
+    };
+
+    updateProfile = async (data: Partial<Omit<User, 'id'>> & Pick<User, 'id'>, signal?: AbortSignal) => {
+        try {
+            const { id, ...restData } = data;
+            void id;
+            const response = await this._client.put<UserApi>(
+                this._createUpdateProfileURL(data.id),
+                restData,
+                { signal, requiredAuth: true }    
             );
             return response;
         } catch(err) {
@@ -104,6 +118,10 @@ export default class AuthApi {
 
     private _createRegisterURL = (): string => {
         return `${this._baseUrl}/users/`;
+    };
+
+    private _createUpdateProfileURL = (id: User['id']): string => {
+        return `${this._baseUrl}/users/${id}`;
     };
     
     private _createLoginURL = (): string => {

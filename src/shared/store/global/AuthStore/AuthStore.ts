@@ -1,8 +1,8 @@
 import AuthApi from "@api/AuthApi";
+import { META_STATUS, MetaStatus } from "@constants/meta-status";
 import { AuthData, RegisterUserData } from "@model/platzi-api";
 import { User } from "@model/user";
 import TokenStorage from "@services/TokenStorage";
-import normalizeUser from "@store/utils/normalize-user";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import UserStorage from "src/shared/services/UserStorage";
 
@@ -23,15 +23,23 @@ type PrivateFields =
     | '_status'
     | '_isAuthorized'
     | '_error'
+    | '_checkAvailableEmail'
+
 
 export default class AuthStore {
     private _user: User | null = null;
     private _status: AuthMetaStatus = AUTH_META_STATUS.IDLE;
-    private _abortCtrl: Record<string, AbortController | null> = {
-        getUser: null,
-    };
     private _isAuthorized: boolean = false;
     private _error: string | null = null;
+    private _checkAvailableEmail: {
+        status: MetaStatus;
+        error: string | null;
+        abort: AbortController | null;
+    } = {
+        status: META_STATUS.IDLE,
+        error: null,
+        abort: null,
+    };
     private api: AuthApi;
 
     constructor(api: AuthApi) {
@@ -40,12 +48,15 @@ export default class AuthStore {
             _status: observable,
             _isAuthorized: observable,
             _error: observable,
+            _checkAvailableEmail: observable,
 
             user: computed,
             status: computed,
             isPending: computed,
             isAuthorized: computed,
             error: computed,
+            checkAvailableEmailStatus: computed,
+            checkAvailableEmailError: computed,
 
             register: action.bound,
             login: action.bound,
@@ -54,7 +65,7 @@ export default class AuthStore {
         });
 
         this.api = api;
-        this.api._client.setAuthErrorHandler(this.logout.bind(this))
+        this.api._client.setAuthErrorHandler(this.logout.bind(this));
     }
 
     get user(): User | null {
@@ -83,6 +94,14 @@ export default class AuthStore {
 
     get isAuthorized(): boolean {
         return this._isAuthorized;
+    }
+
+    get checkAvailableEmailStatus(): MetaStatus {
+        return this._checkAvailableEmail.status;
+    }
+
+    get checkAvailableEmailError(): string | null {
+        return this._checkAvailableEmail.error;
     }
 
     private _setToken(token: string | null): void {
@@ -146,11 +165,12 @@ export default class AuthStore {
                 this.api._client.resetRefreshFailed();
             });
 
-            this._getUserData(data.keepMeLoggedIn);
+            UserStorage.setShouldKeepLogged(data.keepMeLoggedIn);
 
             return { success: true };
 
         } catch(err) {
+ 
             runInAction(() => {
                 const errorMessage = err instanceof Error ? err.message : "UnknownError";
                 this._formateErrorMessage(errorMessage);
@@ -201,7 +221,7 @@ export default class AuthStore {
             return;
         }
 
-        if(!UserStorage.shouldKeepLogged()) {
+        if(!UserStorage.getShouldKeepLogged()) {
             return;
         }
 
@@ -220,10 +240,10 @@ export default class AuthStore {
             runInAction(() => {
                 this._setToken(response.token);
                 this._isAuthorized = true;
+                this._status = AUTH_META_STATUS.SUCCESS;
             });
 
-            this._getUserData(true);
-
+  
         } catch(err) {
             runInAction(() => {
                 const errorMessage = err instanceof Error ? err.message : "UnknownError";
@@ -234,31 +254,40 @@ export default class AuthStore {
         }
     }
 
-    private async _getUserData(save: boolean): Promise<void> {
-        if(this._abortCtrl.getUser) {
-            this._abortCtrl.getUser.abort();
+    async checkEmailAvailability(email: string): Promise<{ success: boolean | undefined, aborted?: boolean }> {
+        if(this._checkAvailableEmail.abort) {
+            this._checkAvailableEmail.abort.abort();
         }
 
-        this._abortCtrl.getUser = new AbortController();
+        this._checkAvailableEmail.error = null;
+        this._checkAvailableEmail.abort = new AbortController();
+        this._checkAvailableEmail.status = META_STATUS.PENDING;
 
         try {
-            const response = await this.api.getProfile();
-            const user = normalizeUser(response);
-            UserStorage.setUser(user, save);
-
+            const response = await this.api.checkEmail({ email }, this._checkAvailableEmail.abort.signal);
+            
             runInAction(() => {
-                this._user = user;
+                this._checkAvailableEmail.status = META_STATUS.SUCCESS;
+                this._checkAvailableEmail.abort = null;
             });
 
+            return { success: response.isAvailable };            
         } catch(err) {
-            const errorMessage = err instanceof Error ? err.message : "UnknownError";
-            this._formateErrorMessage(errorMessage);
-            this._clearUserData();
+            if (err instanceof Error && err.name === 'AbortError') {
+                return { success: undefined, aborted: true };
+            }
 
-        } finally {
-            this._abortCtrl.getUser = null;
+            runInAction(() => {
+                this._checkAvailableEmail.error = err instanceof Error ? err.message : "UnknownError";
+                this._checkAvailableEmail.status = META_STATUS.ERROR;
+                this._checkAvailableEmail.abort = null;
+
+            });
+            
+            return { success: undefined };
         }
     }
+
 
     private _clearUserData(): void {
         UserStorage.clearStorage();
@@ -270,7 +299,7 @@ export default class AuthStore {
 
     private _formateErrorMessage(message: string): void {
         switch(message) {
-            case 'Invalid identifier or password':
+            case 'Unauthorized':
                 this._error = 'Неверный логин или пароль';
                 break;
 

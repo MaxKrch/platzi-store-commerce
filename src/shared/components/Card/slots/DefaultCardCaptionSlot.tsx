@@ -18,7 +18,7 @@ const DefaultCardCaptionSlot: React.FC<{ product: ProductType, className?: strin
     const category = product.category.id;
 
     if(path !== appRoutes.main.create()) {
-      pathStore.updateURL(router, [appRoutes.main.create()]);    
+      pathStore.updateURL(router, appRoutes.main.create());    
     }
     
     queryParamsStore.mergeQueryParams({category});

@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const schema = z.object({
+export const authSchema = z.object({
     login: z.string().min(3, 'Логин должен быть не менее 3 символов').optional(),
     email: z.email('Некорректный email'),
     password: z.string().min(3, 'Пароль должен быть не менее 5 символов')
@@ -8,5 +8,5 @@ export const schema = z.object({
     saveMe: z.boolean()
 });
 
-export type Schema = z.infer<typeof schema>
+export type AuthSchema = z.infer<typeof authSchema>
 

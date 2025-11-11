@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import AuthHeader  from './components/AuthHeader/AuthHeader';
 import AuthForm from './components/AuthForm/AuthForm';
 import { AUTH_MODES, AuthModes } from './constants';
-import { Schema } from './AuthModal.schema';
+import { AuthSchema } from '@schemas/auth.schema';
 
 const AuthModal: React.FC = () => {
     const { modalStore, authStore } = useRootStore();
@@ -18,7 +18,7 @@ const AuthModal: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const errorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
  
-    const handleSubmit = useCallback(async (data: Schema) => {
+    const handleSubmit = useCallback(async (data: AuthSchema) => {
         let result: { success: boolean };
 
         if(authMode === AUTH_MODES.REGISTER) {

@@ -18,6 +18,7 @@ export type AuthRequestConfig = {
 export interface ITransport {
   get<T = unknown>(url: string, options?: RequestOptions): Promise<T>;
   post<T = unknown, P extends object = object>(url: string, data: P, options?: RequestOptions): Promise<T>;
+  put<T = unknown, P extends object = object>(url: string, data: P, options?: RequestOptions): Promise<T>;
 }
 
 export interface IClient extends ITransport {

@@ -15,6 +15,7 @@ const Client = typeof window === 'undefined'
 type RequestInit = 
   | { url: string; method: 'GET'; options?: RequestOptions; }
   | { url: string; method: 'POST'; options?: RequestOptions; data: object; } 
+  | { url: string; method: 'PUT'; options?: RequestOptions; data: object; } 
 
 type QueuedRequest<T> = RequestInit & {
   resolve: (value: T) => void;
@@ -38,6 +39,10 @@ export default class ApiClient implements IClient {
 
     post = async <T = unknown, P extends object = object>(url: string, data: P, options?: RequestOptions): Promise<T> => {
         return this.initRequest<T>({ method: 'POST', url, data, options });
+    };
+
+    put = async <T = unknown, P extends object = object>(url: string, data: P, options?: RequestOptions): Promise<T> => {
+        return this.initRequest<T>({ method: 'PUT', url, data, options });
     };
 
     resetRefreshFailed(): void {
@@ -96,6 +101,8 @@ export default class ApiClient implements IClient {
             case 'POST':
                 return this.client.post<T>(url, args.data, options);
  
+            case 'PUT':
+                return this.client.put<T>(url, args.data, options);
         }
     };
     
@@ -112,7 +119,7 @@ export default class ApiClient implements IClient {
     private async refreshTokens(): Promise<void> {
         try {
             const response = await this.post<AuthResponse>(REFRESH_API, {
-                keepMeLoggedIn: UserStorage.shouldKeepLogged
+                keepMeLoggedIn: UserStorage.getShouldKeepLogged(),
             });
 
             if(!response.success) {

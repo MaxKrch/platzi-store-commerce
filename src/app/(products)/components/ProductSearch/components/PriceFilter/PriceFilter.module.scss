@@ -9,18 +9,32 @@ $input-left-padding: calc($description-width);
 
 
 .price-filter {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: start;
+    display: grid;
+    grid-template-areas: 
+        "title min-price"
+        "title max-price";
     gap: calc(2 * $base-gap);
+    align-items: center;
+    grid-template-columns: auto 1fr;
+
     @include base-adaptive-font-size();
     @include laptop-up() {
-        flex-wrap: nowrap;
+        grid-template-areas: "title min-price max-price";
+        grid-template-columns: auto 1fr 1fr;
     }
 
     &-title {
         font-size: 0.9em;
         padding-left: $base-gap;
+        grid-area: title;
+    }
+
+    &-min {
+        grid-area: min-price;
+    }
+
+    &-max {
+        grid-area: max-price;
     }
     
     &-section {
@@ -28,7 +42,11 @@ $input-left-padding: calc($description-width);
         height: $base-size;
         gap: $base-gap;
         position: relative;
+        width: 100%;
 
+        &__label {
+            width: 100%;
+        }
 
         &__description {
             position: absolute;
@@ -46,7 +64,8 @@ $input-left-padding: calc($description-width);
             height: 100%;
             padding: 0 $input-left-padding;
             font-size: 0.9em;
-            width: 200px;
+            min-width: 200px;
+            width: 100%;
         } 
 
         &__clear {
@@ -57,7 +76,7 @@ $input-left-padding: calc($description-width);
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            right: 0;
+            right: 4px;
 
             &-icon {
                 height: $icon-size;

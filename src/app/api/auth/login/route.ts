@@ -33,6 +33,13 @@ export async function POST (req: Request) {
         maxAge: keepMeLoggedIn ? 60 * 60 * 24 * 30 : undefined,
     });
 
+    res.cookies.set('grace', '1', {
+        httpOnly: false,
+        sameSite: 'strict',
+        path: './',
+        maxAge: 5,
+    });
+
     return res;
 }
 

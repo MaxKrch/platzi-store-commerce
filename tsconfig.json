@@ -26,6 +26,7 @@
       "@constants/*": ["src/shared/constants/*"],
       "@hooks/*": ["src/shared/hooks/*"],
       "@services/*": ["src/shared/services/*"],
+      "@schemas/*": ["src/shared/schemas/*"],
       "@store/*": ["src/shared/store/*"],
       "@style/*": ["src/shared/style/*"],
       "@model/*": ["src/shared/types/*"],
