@@ -29,10 +29,12 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <div className={clsx(style['app'])}>
+        <div id="app" className={clsx(style['app'])}>
           <Providers>
-            <Header />
             <div id="modal-portal" />
+            <div id="popup-portal" />
+            
+            <Header />
             {children}
           </Providers>
         </div>

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import style from './AuthForm.module.scss';
@@ -13,6 +13,8 @@ import UserIcon from "@components/icons/UserIcon";
 import MailIcon from "@components/icons/MailIcon";
 import KeyIcon from "@components/icons/KeyIcon";
 import { authSchema, AuthSchema } from "@schemas/auth.schema";
+import { META_STATUS } from "@constants/meta-status";
+import useValidateEmail from "@hooks/useValidateEmail";
 
 export type AuthFormProps = {
     onSubmit: (data: AuthSchema) => void,
@@ -24,23 +26,35 @@ export type AuthFormProps = {
 
 const AuthForm: React.FC<AuthFormProps> = ({ 
     onSubmit, 
-    mode, 
-    needReset, 
+    mode,
+    needReset,
     error, 
     loading
 }) => {
-    const {
+    const { 
         register,
         control,
-        formState: { errors, isValid, isDirty },
         handleSubmit,
+        formState: { errors, isValid, isDirty },
+        watch,
         reset,
+        trigger,
         resetField,
         clearErrors
     } = useForm<AuthSchema>({
         resolver: zodResolver(authSchema),
         mode: 'onChange'
     });
+    const email = watch('email');
+    const { status, error: validateError, available } = useValidateEmail({ mode, email, trigger }); 
+
+    const emailError = useMemo(() => {
+        return (
+            (errors.email && errors.email.message) 
+            || validateError 
+            || (mode === AUTH_MODES.REGISTER && available === false && 'Email уже занят')
+        );
+    }, [errors.email, validateError, available, mode]);
 
     const handleFocus = useCallback((field: keyof AuthSchema) => {
         clearErrors(field);
@@ -50,6 +64,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
         if (mode === AUTH_MODES.LOGIN) {
             resetField('login');
         }
+        resetField('email');
+        resetField('password');
     }, [mode, resetField]);
 
     useEffect(() => {
@@ -89,11 +105,18 @@ const AuthForm: React.FC<AuthFormProps> = ({
                     type='email'
                     {...register('email')}
                 />
-                <div className={clsx(style['form__error'])}>
-                    {errors.email && errors.email.message}
-                </div>                        
-            </label>
-            
+                {mode === AUTH_MODES.REGISTER && status === META_STATUS.PENDING
+                    ? (
+                        <div className={clsx(style['form__pending'])}>
+                            {'Секунду...'}
+                        </div>                      
+                    ) : (
+                        <div className={clsx(style['form__error'])}>
+                            {emailError}
+                        </div> 
+                    )
+                }                                          
+            </label>            
             
             <label className={clsx(style['form__label'])}>
                 <KeyIcon className={clsx(style['form__icon'])}/>
@@ -134,7 +157,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
             <Button
                 type='submit'
                 className={clsx(style['form__submit-container'])} 
-                disabled={!isValid || !isDirty}
+                // endpoind всегда возращает статус email - занят, поэтому тут нет проверки статуса, чтобы регистрация в принципе работала  
+                disabled={!isValid || !isDirty || (mode === AUTH_MODES.REGISTER && status !== META_STATUS.SUCCESS)}
                 loading={loading}
                 
             >

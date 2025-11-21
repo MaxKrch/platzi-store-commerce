@@ -51,23 +51,5 @@
 
     &__price {
         grid-area: price;
-        display: flex;
-        align-items: flex-end;
-        gap: $space-xxxs;
-        cursor: pointer;
-
-        &:hover {
-            color: $brand;
-        }
-
-        &-description {
-            font-size: 1.1em;
-        }
-
-        &-icon {
-            background-color: #fff;
-            border: 1px solid $brand;
-        }
-       
     }
 }

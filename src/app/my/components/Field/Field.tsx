@@ -19,6 +19,7 @@ export type FieldProps = {
     disabled?: boolean;
     error?: string | null;
     className?: string;
+    debounce?: number; 
 }
 
 const Field: React.FC<FieldProps> = ({ 
@@ -30,12 +31,14 @@ const Field: React.FC<FieldProps> = ({
     saving, 
     disabled, 
     error,
-    className
+    className,
+    debounce = 0
 }) => {
     const [localValue, setLocalValue] = useState(initValue);
     const [editing, setEditing] = useState(false);
     const [validated, setValidated] = useState<MetaStatus>(validate ? META_STATUS.IDLE : META_STATUS.SUCCESS);
     const valueRef = useRef<HTMLInputElement | null>(null);
+    const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     
     const handleEdit = useCallback(() => {
         setEditing(true);
@@ -45,7 +48,6 @@ const Field: React.FC<FieldProps> = ({
     }, []);
 
     const handleConfirm = useCallback(async () => {
-        console.log(validated);
         if(initValue === localValue || validated !== META_STATUS.SUCCESS) {
             return;
         }
@@ -67,23 +69,30 @@ const Field: React.FC<FieldProps> = ({
 
     const handleInput = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
+
         if(newValue !== localValue) {
             setLocalValue(newValue);
-            
+
             if(validate) {
                 setValidated(() => META_STATUS.PENDING);
-                const result = await validate(newValue);
-                console.log(result);
-                if(result.success) {
-                    setValidated(() => META_STATUS.SUCCESS);
+                if(timeout.current) {
+                    clearTimeout(timeout.current);
                 }
 
-                if(!result.success && !result.aborted) {
-                  setValidated(() => META_STATUS.ERROR);  
-                }                
+                timeout.current = setTimeout(async () => {
+                    const result = await validate(newValue);
+                    if(result.success) {
+                        setValidated(() => META_STATUS.SUCCESS);
+                    }
+
+                    if(!result.success && !result.aborted) {
+                        setValidated(() => META_STATUS.ERROR);  
+                    }      
+                }, debounce);
+                         
             }
         }
-    }, [validate, localValue]);
+    }, [validate, localValue, debounce]);
 
     const handleKeyUp = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -103,10 +112,8 @@ const Field: React.FC<FieldProps> = ({
     }, [initValue, localValue]);
 
     useEffect(() => {
-        if(localValue !== initValue) {
-            setLocalValue(initValue);
-        }
-    }, [initValue, localValue]);
+        setLocalValue(initValue);
+    }, [initValue]);
  
     return(
         <div className={clsx(style['field'], className)}>
@@ -171,7 +178,7 @@ const Field: React.FC<FieldProps> = ({
                     ) 
                     : (
                         <div className={clsx(style['field__error'])}>
-                            {error}
+                            {editing && error}
                         </div>   
                     )
                 }

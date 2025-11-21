@@ -70,9 +70,9 @@ const AuthModal: React.FC = () => {
                 <AuthForm 
                     mode={authMode}
                     onSubmit={handleSubmit} 
-                    needReset={!modalStore.isOpen} 
                     error={error} 
                     loading={authStore.isPending}
+                    needReset={!modalStore.isOpen}
                 />
             </div>
         </ModalPortal>

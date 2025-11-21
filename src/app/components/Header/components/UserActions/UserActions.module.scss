@@ -64,4 +64,8 @@ $actions-tablet-up-width: calc($actions-width + $actions-tablet-up-gap);
 
         }
     }
+
+    &__user-menu-anchor {
+        position: relative;
+    }
 }

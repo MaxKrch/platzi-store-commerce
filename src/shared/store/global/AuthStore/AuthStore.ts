@@ -23,7 +23,7 @@ type PrivateFields =
     | '_status'
     | '_isAuthorized'
     | '_error'
-    | '_checkAvailableEmail'
+    | '_checkEmail'
 
 
 export default class AuthStore {
@@ -31,14 +31,14 @@ export default class AuthStore {
     private _status: AuthMetaStatus = AUTH_META_STATUS.IDLE;
     private _isAuthorized: boolean = false;
     private _error: string | null = null;
-    private _checkAvailableEmail: {
+    private _checkEmail: {
         status: MetaStatus;
         error: string | null;
-        abort: AbortController | null;
+        available: boolean | undefined;
     } = {
         status: META_STATUS.IDLE,
         error: null,
-        abort: null,
+        available: undefined,
     };
     private api: AuthApi;
 
@@ -48,20 +48,21 @@ export default class AuthStore {
             _status: observable,
             _isAuthorized: observable,
             _error: observable,
-            _checkAvailableEmail: observable,
+            _checkEmail: observable,
 
             user: computed,
             status: computed,
             isPending: computed,
             isAuthorized: computed,
             error: computed,
-            checkAvailableEmailStatus: computed,
-            checkAvailableEmailError: computed,
+            checkEmail: computed,
 
             register: action.bound,
             login: action.bound,
             logout: action.bound,
             initAuth: action.bound,
+            checkEmailAvailability: action.bound,
+            resetEmailAvailability: action.bound,
         });
 
         this.api = api;
@@ -96,12 +97,8 @@ export default class AuthStore {
         return this._isAuthorized;
     }
 
-    get checkAvailableEmailStatus(): MetaStatus {
-        return this._checkAvailableEmail.status;
-    }
-
-    get checkAvailableEmailError(): string | null {
-        return this._checkAvailableEmail.error;
+    get checkEmail(): typeof this._checkEmail {
+        return this._checkEmail;
     }
 
     private _setToken(token: string | null): void {
@@ -254,21 +251,17 @@ export default class AuthStore {
         }
     }
 
-    async checkEmailAvailability(email: string): Promise<{ success: boolean | undefined, aborted?: boolean }> {
-        if(this._checkAvailableEmail.abort) {
-            this._checkAvailableEmail.abort.abort();
-        }
-
-        this._checkAvailableEmail.error = null;
-        this._checkAvailableEmail.abort = new AbortController();
-        this._checkAvailableEmail.status = META_STATUS.PENDING;
+    async checkEmailAvailability(email: string, options: { signal?: AbortSignal }): Promise<{ success: boolean | undefined, aborted?: boolean }> {
+        this._checkEmail.error = null;
+        this._checkEmail.available = undefined;
+        this._checkEmail.status = META_STATUS.PENDING;
 
         try {
-            const response = await this.api.checkEmail({ email }, this._checkAvailableEmail.abort.signal);
+            const response = await this.api.checkEmail({ email }, options.signal);
             
             runInAction(() => {
-                this._checkAvailableEmail.status = META_STATUS.SUCCESS;
-                this._checkAvailableEmail.abort = null;
+                this._checkEmail.status = META_STATUS.SUCCESS;
+                this._checkEmail.available = response.isAvailable;
             });
 
             return { success: response.isAvailable };            
@@ -278,16 +271,21 @@ export default class AuthStore {
             }
 
             runInAction(() => {
-                this._checkAvailableEmail.error = err instanceof Error ? err.message : "UnknownError";
-                this._checkAvailableEmail.status = META_STATUS.ERROR;
-                this._checkAvailableEmail.abort = null;
-
+                this._checkEmail.error = err instanceof Error ? err.message : "UnknownError";
+                this._checkEmail.status = META_STATUS.ERROR;
             });
             
             return { success: undefined };
         }
     }
 
+    resetEmailAvailability(): void {
+        this._checkEmail = {
+            status: META_STATUS.IDLE,
+            error: null,
+            available: undefined,
+        };
+    }
 
     private _clearUserData(): void {
         UserStorage.clearStorage();

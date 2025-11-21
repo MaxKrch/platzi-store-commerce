@@ -8,9 +8,10 @@ import AuthApi from '@api/AuthApi';
 import AuthStore from '@store/global/AuthStore/AuthStore';
 import ModalStore from '@store/global/ModalStore';
 import { ReadonlyURLSearchParams } from 'next/navigation';
-import PathStore from '@store/global/PathStore/PathStore';
+import PathStore from '@store/global/PathStore';
 import { reaction } from 'mobx';
-import UserStore from '@store/global/UserStore/UserStore';
+import UserStore from '@store/global/UserStore';
+import PopupStore from '@store/global/PopupStore/PopupStore';
 
 export type RootStoreInitData = {
   client: IClient;
@@ -26,6 +27,7 @@ export interface IRootStore {
   readonly userStore: UserStore;
   readonly cartStore: CartStore;
   readonly modalStore: ModalStore;
+  readonly popupStore: PopupStore;
   readonly api: {
     categories: CategoriesApi
     products: ProductsApi,
@@ -40,6 +42,7 @@ export default class RootStore implements IRootStore {
   readonly userStore: UserStore;
   readonly cartStore: CartStore;
   readonly modalStore: ModalStore;
+  readonly popupStore: PopupStore;
   readonly api: {
     categories: CategoriesApi,
     products: ProductsApi,
@@ -50,8 +53,7 @@ export default class RootStore implements IRootStore {
     client,
     path,
     queryParams
-  }: RootStoreInitData) {
-    
+  }: RootStoreInitData) {    
     this.api = {
       categories: new CategoriesApi(client),
       products: new ProductsApi(client),
@@ -64,12 +66,14 @@ export default class RootStore implements IRootStore {
     this.userStore = new UserStore(this.api.auth);
     this.cartStore = new CartStore();
     this.modalStore = new ModalStore();
+    this.popupStore = new PopupStore();
 
     reaction(
       () => this.authStore.isAuthorized,
       (isAuthorized) => {
         if(isAuthorized) {
           this.userStore.fetchUser();
+          this.cartStore.loadCart();
         } else {
           this.userStore.clearUser();
         }

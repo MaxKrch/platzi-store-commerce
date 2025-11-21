@@ -1,11 +1,13 @@
 import { useRootStore } from '@providers/RootStoreContext';
 import Field from '../Field';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { META_STATUS } from '@constants/meta-status';
 import { authSchema } from '@schemas/auth.schema';
 
+
 const Email: React.FC = () => {
     const { userStore, authStore } = useRootStore();
+    const abortCtrl = useRef<AbortController | null>(null);
     const [error, setError] = useState<string | null>(userStore.error.updateEmail); 
 
     const handleSave = useCallback(async (value: string) => {
@@ -24,11 +26,23 @@ const Email: React.FC = () => {
 
         } 
         
-        const isAvailableEmail = await authStore.checkEmailAvailability(value);
+        if(abortCtrl.current) {
+            abortCtrl.current.abort();
+        }
 
-        if(isAvailableEmail.aborted) {
+        const controller = new AbortController();
+        abortCtrl.current = controller;
+        
+        const isAvailableEmail = await authStore.checkEmailAvailability(value, { 
+            signal: abortCtrl.current.signal
+        });
+
+        if(controller !== abortCtrl.current || isAvailableEmail.aborted) {
             return { success: false, aborted: true };
         }
+
+        abortCtrl.current = null;
+
         if(isAvailableEmail.success) {
             setError(null);
             return { success: true };
@@ -39,7 +53,7 @@ const Email: React.FC = () => {
             return { success: false };     
         }
 
-        setError(authStore.checkAvailableEmailError);
+        setError(authStore.checkEmail.error);
         return { success: false };                
     }, [authStore]);
 
@@ -57,6 +71,7 @@ const Email: React.FC = () => {
             error={error}
             type='email'
             validate={validate}
+            debounce={300}
         />
     );
 };

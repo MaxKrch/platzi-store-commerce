@@ -1,0 +1,33 @@
+@use '@style/variables' as *;
+@use '@style/mixins' as *;
+
+.menu {
+    display: flex;
+    flex-direction: column;
+
+    &__wrapper {
+        box-shadow: $shadow-normal;
+        overflow: hidden;
+        border-radius: $border-radius-secondary;
+        background-color: $primary-bg;
+    }
+
+    &-link {
+        padding: 0 $space-l;
+        height: 100%;
+        width: 100%;
+        display: block;        
+        display: flex;
+        align-items: center;   
+        
+        &:hover {
+            background-color: white;
+            color: $brand;
+        }     
+
+        &__wrapper {  
+            border: 1px solid white;
+            height: $control-field-height;    
+        }
+    }
+}

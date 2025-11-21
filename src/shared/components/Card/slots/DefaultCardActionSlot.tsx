@@ -16,7 +16,7 @@ export type DefaultCardActionSlot = {
 }
 
 const DefaultCardActionSlot: React.FC<DefaultCardActionSlot> = ({ product, priority = 'primary', className }) => {
-  const { cartStore, authStore, modalStore } = useRootStore();
+  const { cartStore } = useRootStore();
   const [mounted, setMounted] = useState(false);
   const productFromCart = cartStore.getProductById(product.id);
   const count =  productFromCart?.quantity ?? 0;
@@ -25,33 +25,14 @@ const DefaultCardActionSlot: React.FC<DefaultCardActionSlot> = ({ product, prior
     setMounted(true);
   }, []);
 
-  const handleClick = useCallback(
-    (product: ProductType) => {
-      if(!authStore.isAuthorized) {
-        modalStore.open('auth');
-        return;
-      }
-
-      cartStore.addToCart(product);
-    },
-    [cartStore, modalStore, authStore.isAuthorized]
-  );
-
   const handleAddProduct = useCallback(() => {
-      if(!authStore.isAuthorized) {
-        modalStore.open('auth');
-        return;
-      }
       cartStore.addToCart(product);
-  }, [cartStore, product, modalStore, authStore.isAuthorized]);
+  }, [cartStore, product]);
 
   const handleRemoveProduct = useCallback(() => {
-      if(!authStore.isAuthorized) {
-        modalStore.open('auth');
-        return;
-      }
+
       cartStore.removeFromCart(product);
-  }, [cartStore, product, modalStore, authStore.isAuthorized]);
+  }, [cartStore, product]);
 
   return (
     <div className={clsx(style['action-slot'], className)}>
@@ -59,7 +40,7 @@ const DefaultCardActionSlot: React.FC<DefaultCardActionSlot> = ({ product, prior
         ? (
           <Button
             priority={priority} 
-            onClick={() => handleClick(product)} 
+            onClick={() => cartStore.addToCart(product)} 
             className={clsx(style['action-slot__button'])}
           >
             В корзину

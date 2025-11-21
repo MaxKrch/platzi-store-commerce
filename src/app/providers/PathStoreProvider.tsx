@@ -1,12 +1,12 @@
 "use client";
 
-import usePathSynch from "@store/global/PathStore/usePathStoreSynch";
+import { usePathStoreSynch } from "@store/global/PathStore";
 import { PropsWithChildren } from "react";
 import { useRootStore } from "./RootStoreContext";
 
 const PathStoreProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const { pathStore } = useRootStore();
-    usePathSynch(pathStore);
+    usePathStoreSynch(pathStore);
 
     return(
         <>

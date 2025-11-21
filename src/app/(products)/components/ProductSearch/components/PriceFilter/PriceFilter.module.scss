@@ -4,7 +4,7 @@
 $base-gap: $space-s;
 $base-size: $control-field-height;
 $icon-size: 24px;
-$description-width: 50px;
+$description-width: 40px;
 $input-left-padding: calc($description-width);
 
 
@@ -64,7 +64,6 @@ $input-left-padding: calc($description-width);
             height: 100%;
             padding: 0 $input-left-padding;
             font-size: 0.9em;
-            min-width: 200px;
             width: 100%;
         } 
 
